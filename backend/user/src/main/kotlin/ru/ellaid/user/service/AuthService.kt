@@ -26,7 +26,7 @@ class AuthService(
             return Result(Status.WRONG_CREDENTIALS, message = "Wrong login or password")
         }
 
-        return Result(Status.SUCCESS)
+        return Result(Status.SUCCESS, data = user.id)
     }
 
     fun register(

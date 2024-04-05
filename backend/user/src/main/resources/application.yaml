@@ -5,4 +5,5 @@ spring:
     mongodb:
       host: mongodb
       port: 27017
-      database: test_db
+      database: user-service-db
+      auto-index-creation: true

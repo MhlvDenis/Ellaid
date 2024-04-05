@@ -23,7 +23,7 @@ class AuthController(
         val result = authService.login(userCredentialsForm.login, userCredentialsForm.password)
 
         return when (result.status) {
-            Status.SUCCESS -> ResponseEntity("token", HttpStatus.OK)
+            Status.SUCCESS -> ResponseEntity(result.data, HttpStatus.OK)
             else -> ResponseEntity(result.message, HttpStatus.FORBIDDEN)
         }
     }

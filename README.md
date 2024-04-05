@@ -1,2 +1,2 @@
 # Ellaid
-Distributed systems project, music service with comments
+![](docs/images/services.diagram.png)

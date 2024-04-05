@@ -1,0 +1,8 @@
+spring.application.name: user
+
+spring:
+  data:
+    mongodb:
+      host: mongodb
+      port: 27017
+      database: test_db

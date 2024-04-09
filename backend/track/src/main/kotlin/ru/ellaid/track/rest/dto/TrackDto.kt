@@ -1,4 +1,4 @@
-package ru.ellaid.track.form
+package ru.ellaid.track.rest.dto
 
 data class TrackDto(
     val name: String,

@@ -7,3 +7,6 @@ spring:
       port: 27017
       database: track-service-db
       auto-index-creation: true
+
+search:
+  return-limit: 5

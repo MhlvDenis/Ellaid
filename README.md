@@ -1,2 +1,2 @@
 # Ellaid
-![](docs/images/services.diagram.png)
+![](docs/images/services.png)

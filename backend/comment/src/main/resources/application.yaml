@@ -1,0 +1,9 @@
+spring:
+  application.name: comment
+
+  data:
+    mongodb:
+      host: comment-mongodb
+      port: 27017
+      database: comment-service-db
+      auto-index-creation: true

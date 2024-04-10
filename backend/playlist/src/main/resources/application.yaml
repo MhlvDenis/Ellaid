@@ -1,0 +1,9 @@
+spring:
+  application.name: playlist
+
+  data:
+    mongodb:
+      host: playlist-mongodb
+      port: 27017
+      database: playlist-service-db
+      auto-index-creation: true

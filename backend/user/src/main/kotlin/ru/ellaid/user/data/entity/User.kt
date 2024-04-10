@@ -1,4 +1,4 @@
-package ru.ellaid.user.entity
+package ru.ellaid.user.data.entity
 
 import org.springframework.data.annotation.Id
 import org.springframework.data.mongodb.core.index.Indexed

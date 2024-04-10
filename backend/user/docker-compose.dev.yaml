@@ -13,18 +13,13 @@ services:
       - mongodb
 
   mongodb:
-    container_name: mongodb
+    container_name: user-mongodb
     image: mongo:latest
     restart: always
     networks:
       - user-service-net
     ports:
       - "27017:27017"
-    env_file:
-      - .env.dev
-    environment:
-      MONGO_INITDB_ROOT_USERNAME: ${MONGO_INITDB_ROOT_USERNAME}
-      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_INITDB_ROOT_PASSWORD}
     volumes:
       - mongodb_data:/data/db
 

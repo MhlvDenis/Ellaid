@@ -1,4 +1,4 @@
-package ru.ellaid.user.form
+package ru.ellaid.user.rest.form
 
 data class UserCredentialsForm(
     val login: String,

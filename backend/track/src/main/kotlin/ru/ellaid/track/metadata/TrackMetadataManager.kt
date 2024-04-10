@@ -26,7 +26,7 @@ class TrackMetadataManager(
     }
 
     @Async
-    @Scheduled(fixedRate = 10_000)
+    @Scheduled(fixedRateString = "\${metadata.update-period-ms}")
     fun updateMetadata() {
         _metadata = loadMetadata()
     }

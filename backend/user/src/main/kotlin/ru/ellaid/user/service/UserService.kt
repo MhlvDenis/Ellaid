@@ -1,9 +1,9 @@
 package ru.ellaid.user.service
 
 import org.springframework.stereotype.Service
-import ru.ellaid.user.entity.User
+import ru.ellaid.user.data.entity.User
 import ru.ellaid.user.exception.UserAlreadyExistsException
-import ru.ellaid.user.repository.UsersRepository
+import ru.ellaid.user.data.repository.UsersRepository
 
 @Service
 class UserService(

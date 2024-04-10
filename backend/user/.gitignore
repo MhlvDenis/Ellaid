@@ -38,4 +38,9 @@ out/
 
 ### Kotlin ###
 .kotlin
+
+### Environment variables ###
 .env
+
+### Local db ###
+data

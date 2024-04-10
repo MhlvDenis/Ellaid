@@ -5,7 +5,6 @@ import org.springframework.stereotype.Service
 import ru.ellaid.track.data.entity.Track
 import ru.ellaid.track.data.repository.TrackRepository
 import ru.ellaid.track.exception.DuplicateTrackUrlException
-import ru.ellaid.track.rest.dto.TrackDto
 
 private val logger = KotlinLogging.logger { }
 
@@ -14,19 +13,19 @@ class TrackService(
     private val repository: TrackRepository
 ) {
 
-    fun addTrack(trackDto: TrackDto): Track {
-        if (repository.findByMusicUrl(trackDto.musicUrl) != null) {
-            logger.error { "Track with url ${trackDto.musicUrl} already exists" }
+    fun createTrack(
+        name: String,
+        author: String,
+        musicUrl: String,
+        coverUrl: String
+    ): Track {
+        if (repository.findByMusicUrl(musicUrl) != null) {
+            logger.error { "Track with url $musicUrl already exists" }
             throw DuplicateTrackUrlException()
         }
 
         return repository.save(
-            Track(
-                name = trackDto.name,
-                author = trackDto.author,
-                musicUrl = trackDto.musicUrl,
-                coverUrl = trackDto.coverUrl
-            )
+            Track(name, author, musicUrl, coverUrl)
         )
     }
 }

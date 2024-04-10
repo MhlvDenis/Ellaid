@@ -1,0 +1,30 @@
+version: "3.7"
+
+services:
+  app:
+    container_name: playlist-service
+    build: .
+    restart: always
+    networks:
+      - playlist-service-net
+    ports:
+      - "8080:8080"
+    depends_on:
+      - mongodb
+
+  mongodb:
+    container_name: playlist-mongodb
+    image: mongo:latest
+    restart: always
+    networks:
+      - playlist-service-net
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongodb_data:/data/db
+
+networks:
+  playlist-service-net:
+
+volumes:
+  mongodb_data:

@@ -1,0 +1,15 @@
+spring:
+  application.name: track
+
+  data:
+    mongodb:
+      host: track-mongodb
+      port: 27017
+      database: track-service-db
+      auto-index-creation: true
+
+search:
+  return-limit: 5
+
+metadata:
+  update-period-ms: 10000

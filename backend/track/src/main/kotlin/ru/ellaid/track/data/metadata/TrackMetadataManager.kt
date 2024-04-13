@@ -10,6 +10,7 @@ import ru.ellaid.track.data.entity.Track
 import ru.ellaid.track.data.repository.TrackRepository
 import java.util.concurrent.locks.ReadWriteLock
 import java.util.concurrent.locks.ReentrantReadWriteLock
+import kotlin.concurrent.withLock
 
 @Component
 @EnableAsync
@@ -25,11 +26,8 @@ class TrackMetadataManager(
     private var _metadata: Map<String, Track> = HashMap()
     val metadata: Map<String, Track>
         get() {
-            readLock.lock()
-            try {
+            readLock.withLock {
                 return _metadata
-            } finally {
-                readLock.unlock()
             }
         }
 
@@ -46,11 +44,8 @@ class TrackMetadataManager(
 
     private fun loadMetadata() {
         val newMetadata = repository.findAll().associateBy { track -> track.id!! }
-        writeLock.lock()
-        try {
+        writeLock.withLock {
             _metadata = newMetadata
-        } finally {
-            writeLock.unlock()
         }
     }
 }

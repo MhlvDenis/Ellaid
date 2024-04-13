@@ -1,9 +1,0 @@
-spring:
-  application.name: user
-
-  data:
-    mongodb:
-      host: user-mongodb
-      port: 27017
-      database: user-service-db
-      auto-index-creation: true

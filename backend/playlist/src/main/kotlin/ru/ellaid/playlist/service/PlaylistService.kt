@@ -34,9 +34,7 @@ class PlaylistService(
             throw DuplicatePlaylistException()
         }
 
-        return repository.save(
-            Playlist(title, userId)
-        )
+        return repository.save(Playlist(title, userId))
     }
 
     fun deletePlaylist(playlistId: String): Playlist =

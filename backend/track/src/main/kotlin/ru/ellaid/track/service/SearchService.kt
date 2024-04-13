@@ -2,10 +2,10 @@ package ru.ellaid.track.service
 
 import io.github.oshai.kotlinlogging.KotlinLogging
 import org.springframework.stereotype.Service
-import ru.ellaid.track.algorithm.SearchAlgorithm
 import ru.ellaid.track.data.entity.Track
+import ru.ellaid.track.data.metadata.TrackMetadataManager
 import ru.ellaid.track.exception.TrackNotFoundException
-import ru.ellaid.track.metadata.TrackMetadataManager
+import ru.ellaid.track.search.SearchAlgorithm
 
 private val logger = KotlinLogging.logger { }
 
@@ -21,8 +21,5 @@ class SearchService(
         }
 
     fun searchByPattern(pattern: String): List<Track> =
-        searchAlgorithm.perform(
-            metadataManager.metadata.values.toList(),
-            pattern
-        )
+        searchAlgorithm.perform(metadataManager.metadata.values.toList(), pattern)
 }

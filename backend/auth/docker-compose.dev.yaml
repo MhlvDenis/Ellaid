@@ -1,0 +1,32 @@
+version: "3.7"
+
+services:
+  app:
+    container_name: auth-service
+    build: .
+    restart: always
+    networks:
+      - auth-service-net
+    ports:
+      - "8080:8080"
+    depends_on:
+      - mongodb
+    environment:
+      JWT_SECRET_KEY: ${JWT_SECRET_KEY}
+
+  mongodb:
+    container_name: auth-mongodb
+    image: mongo:latest
+    restart: always
+    networks:
+      - auth-service-net
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongodb_data:/data/db
+
+networks:
+  auth-service-net:
+
+volumes:
+  mongodb_data:

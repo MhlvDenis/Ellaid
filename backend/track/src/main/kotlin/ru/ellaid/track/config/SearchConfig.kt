@@ -7,10 +7,10 @@ import ru.ellaid.track.search.SearchAlgorithm
 import ru.ellaid.track.search.SearchWithTyposAlgorithm
 
 @Configuration
-class SearchConfig {
+open class SearchConfig {
 
     @Bean
-    fun searchWithTyposAlgorithm(
+    open fun searchWithTyposAlgorithm(
         @Value("\${search.return-limit: 5}")
         returnLimit: Long
     ): SearchAlgorithm = SearchWithTyposAlgorithm(returnLimit)

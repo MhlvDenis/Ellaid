@@ -15,7 +15,7 @@ import kotlin.concurrent.withLock
 @Component
 @EnableAsync
 @EnableScheduling
-class TrackMetadataManager(
+open class TrackMetadataManager(
     private val repository: TrackRepository
 ) {
 
@@ -38,7 +38,7 @@ class TrackMetadataManager(
 
     @Async
     @Scheduled(fixedRateString = "\${metadata.update-period-ms}")
-    fun updateMetadataTask() {
+    open fun updateMetadataTask() {
         loadMetadata()
     }
 

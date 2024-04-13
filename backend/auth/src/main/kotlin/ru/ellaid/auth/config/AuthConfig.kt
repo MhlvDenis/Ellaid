@@ -15,10 +15,10 @@ import ru.ellaid.auth.service.UserService
 
 @Configuration
 @EnableWebSecurity
-class AuthConfig {
+open class AuthConfig {
 
     @Bean
-    fun securityFilterChain(
+    open fun securityFilterChain(
         http: HttpSecurity
     ): SecurityFilterChain =
         http.csrf { it.disable() }
@@ -26,10 +26,10 @@ class AuthConfig {
             .build()
 
     @Bean
-    fun passwordEncoder(): PasswordEncoder = BCryptPasswordEncoder()
+    open fun passwordEncoder(): PasswordEncoder = BCryptPasswordEncoder()
 
     @Bean
-    fun authenticationProvider(
+    open fun authenticationProvider(
         userService: UserService,
         passwordEncoder: PasswordEncoder
     ): AuthenticationProvider =
@@ -39,7 +39,7 @@ class AuthConfig {
         }
 
     @Bean
-    fun authenticationManager(
+    open fun authenticationManager(
         config: AuthenticationConfiguration
     ): AuthenticationManager = config.authenticationManager
 }

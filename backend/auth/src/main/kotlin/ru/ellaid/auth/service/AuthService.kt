@@ -1,16 +1,22 @@
 package ru.ellaid.auth.service
 
+import org.springframework.context.annotation.Import
 import org.springframework.security.authentication.AuthenticationManager
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
 import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.stereotype.Service
 import ru.ellaid.auth.data.entity.User
 import ru.ellaid.auth.exception.AuthenticationFailedException
+import ru.ellaid.jwt.auth.JwtAuthConfig
+import ru.ellaid.jwt.auth.helper.JwtAuthHelper
 
 @Service
+@Import(value = [
+    JwtAuthConfig::class,
+])
 class AuthService(
     private val userService: UserService,
-    private val jwtService: JwtService,
+    private val jwtAuthHelper: JwtAuthHelper,
     private val authenticationManager: AuthenticationManager,
     private val passwordEncoder: PasswordEncoder,
 ) {
@@ -29,7 +35,7 @@ class AuthService(
         )
 
         return if (auth.isAuthenticated) {
-            jwtService.generateToken(login, emptyMap())
+            jwtAuthHelper.generateToken(login, emptyMap())
         } else {
             throw AuthenticationFailedException()
         }

@@ -7,7 +7,6 @@ allprojects {
 }
 
 plugins {
-    id("maven-publish")
     id("org.springframework.boot") version "3.2.4"
     id("io.spring.dependency-management") version "1.1.4"
     kotlin("jvm") version "1.9.23"
@@ -23,7 +22,6 @@ subprojects {
         plugin("org.springframework.boot")
         plugin("io.spring.dependency-management")
         plugin("kotlin")
-        plugin("maven-publish")
     }
 
     java {

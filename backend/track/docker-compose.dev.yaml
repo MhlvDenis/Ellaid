@@ -11,6 +11,10 @@ services:
       - "8080:8080"
     depends_on:
       - mongodb
+    environment:
+      JWT_SECRET_KEY: ${JWT_SECRET_KEY}
+      JWT_ISSUER: ${JWT_ISSUER}
+      JWT_EXPIRATION_TIME_MS: ${JWT_EXPIRATION_TIME_MS}
 
   mongodb:
     container_name: track-mongodb

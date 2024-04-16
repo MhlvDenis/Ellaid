@@ -1,5 +1,7 @@
 package ru.ellaid.jwt.auth
 
+import org.junit.jupiter.api.Assertions
+import org.junit.jupiter.api.Test
 import ru.ellaid.jwt.auth.helper.JwtAuthHelper
 import ru.ellaid.jwt.auth.helper.JwtAuthHelperImpl
 

@@ -65,7 +65,7 @@ class JwtAuthHelperImpl(
         Jwts.parserBuilder()
             .setSigningKey(signKey)
             .build()
-            .parseClaimsJwt(token)
+            .parseClaimsJws(token)
             .body
     } catch (e: Exception) {
         logger.error { e.message }

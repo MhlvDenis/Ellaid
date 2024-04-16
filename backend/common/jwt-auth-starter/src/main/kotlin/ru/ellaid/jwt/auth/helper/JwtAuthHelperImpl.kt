@@ -1,11 +1,14 @@
 package ru.ellaid.jwt.auth.helper
 
+import io.github.oshai.kotlinlogging.KotlinLogging
 import io.jsonwebtoken.*
 import io.jsonwebtoken.io.Decoders
 import io.jsonwebtoken.security.Keys
 import ru.ellaid.jwt.auth.exception.InvalidJwtTokenException
 import java.security.SignatureException
 import java.util.*
+
+private val logger = KotlinLogging.logger { }
 
 class JwtAuthHelperImpl(
     jwtSecretKey: String,
@@ -19,8 +22,9 @@ class JwtAuthHelperImpl(
 
     override fun generateToken(
         username: String,
-        userId: String
-    ): String = generateToken(username, mapOf("UserId" to userId))
+        userId: String,
+        role: String
+    ): String = generateToken(username, mapOf("UserId" to userId, "Role" to role))
 
     override fun generateToken(
         username: String,
@@ -41,15 +45,16 @@ class JwtAuthHelperImpl(
         claims.get("UserId", String::class.java)
     }
 
+    override fun extractRole(token: String): String = extractClaim(token) { claims ->
+        claims.get("Role", String::class.java)
+    }
+
     override fun extractIssuer(token: String): String = extractClaim(token) { it.issuer }
 
-    override fun isTokenValid(username: String, token: String): Boolean =
-        (username == extractUsername(token)) && !isTokenExpired(token)
+    override fun isTokenExpired(token: String): Boolean =
+        extractExpiration(token).before(Date(System.currentTimeMillis()))
 
     private fun extractExpiration(token: String): Date = extractClaim(token) { it.expiration }
-
-    private fun isTokenExpired(token: String): Boolean =
-        extractExpiration(token).before(Date(System.currentTimeMillis()))
 
     private fun <T> extractClaim(
         token: String,
@@ -63,6 +68,7 @@ class JwtAuthHelperImpl(
             .parseClaimsJwt(token)
             .body
     } catch (e: Exception) {
+        logger.error { e.message }
         when (e) {
             is ExpiredJwtException, is UnsupportedJwtException,
             is MalformedJwtException, is SignatureException,

@@ -15,6 +15,12 @@ open class SecurityConfig {
         http: HttpSecurity
     ): SecurityFilterChain =
         http.csrf { it.disable() }
-            .authorizeHttpRequests { it.requestMatchers("/auth/sign-up", "/auth/sign-in").permitAll() }
+            .authorizeHttpRequests {
+                it.requestMatchers(
+                    "/auth/sign-up",
+                    "/auth/sign-in",
+                    "/auth/validate"
+                ).permitAll()
+            }
             .build()
 }

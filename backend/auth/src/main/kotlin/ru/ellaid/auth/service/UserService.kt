@@ -3,6 +3,7 @@ package ru.ellaid.auth.service
 import org.springframework.security.core.userdetails.UserDetails
 import org.springframework.security.core.userdetails.UserDetailsService
 import org.springframework.stereotype.Service
+import ru.ellaid.auth.data.entity.Role
 import ru.ellaid.auth.data.entity.User
 import ru.ellaid.auth.data.repository.UserRepository
 import ru.ellaid.auth.exception.DuplicateUserLoginException
@@ -16,16 +17,20 @@ class UserService(
     fun createUser(
         login: String,
         password: String,
+        role: Role = Role.ROLE_USER
     ): User =
         if (repository.findUserByLogin(login) != null) {
             throw DuplicateUserLoginException()
         } else {
-            repository.save(User(login, password))
+            repository.save(User(login, password, role))
         }
+
+    fun getUserByLogin(login: String): User =
+        repository.findUserByLogin(login) ?: throw UserNotFoundException()
 
     override fun loadUserByUsername(username: String?): UserDetails =
         if (username != null) {
-            repository.findUserByLogin(username) ?: throw UserNotFoundException()
+            getUserByLogin(username)
         } else {
             throw UserNotFoundException()
         }

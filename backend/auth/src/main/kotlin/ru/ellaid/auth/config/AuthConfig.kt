@@ -49,7 +49,7 @@ open class AuthConfig {
         userService: UserService,
         passwordEncoder: PasswordEncoder
     ): User = try {
-        userService.createUser(username, passwordEncoder.encode(password), Role.ROLE_ADMIN)
+        userService.createUser(username, passwordEncoder.encode(password), Role.ADMIN)
     } catch (e: DuplicateUserLoginException) {
         userService.getUserByLogin(username)
     }

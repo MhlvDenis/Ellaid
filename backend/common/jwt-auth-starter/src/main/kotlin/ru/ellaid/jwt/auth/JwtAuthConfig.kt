@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Value
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
+import ru.ellaid.jwt.auth.filter.JwtAuthFilter
 import ru.ellaid.jwt.auth.helper.JwtAuthHelper
 import ru.ellaid.jwt.auth.helper.JwtAuthHelperImpl
 
@@ -23,4 +24,9 @@ open class JwtAuthConfig {
         @Value("\${app.security.expiration-time-ms}")
         expirationTime: Long
     ): JwtAuthHelper = JwtAuthHelperImpl(jwtSecretKey, issuer, expirationTime)
+
+    @Bean
+    open fun jwtAuthFilter(
+        jwtAuthHelper: JwtAuthHelper
+    ): JwtAuthFilter = JwtAuthFilter(jwtAuthHelper)
 }

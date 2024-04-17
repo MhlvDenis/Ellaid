@@ -17,7 +17,7 @@ class UserService(
     fun createUser(
         login: String,
         password: String,
-        role: Role = Role.ROLE_USER
+        role: Role = Role.USER
     ): User =
         if (repository.findUserByLogin(login) != null) {
             throw DuplicateUserLoginException()

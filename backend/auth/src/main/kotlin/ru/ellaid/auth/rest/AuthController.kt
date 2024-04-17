@@ -2,13 +2,11 @@ package ru.ellaid.auth.rest
 
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
-import org.springframework.web.bind.annotation.PostMapping
-import org.springframework.web.bind.annotation.RequestBody
-import org.springframework.web.bind.annotation.RequestMapping
-import org.springframework.web.bind.annotation.RestController
+import org.springframework.web.bind.annotation.*
 import ru.ellaid.auth.exception.AuthenticationFailedException
 import ru.ellaid.auth.exception.DuplicateUserLoginException
 import ru.ellaid.auth.rest.form.UserCredentialsForm
+import ru.ellaid.auth.rest.form.ValidationResponse
 import ru.ellaid.auth.service.AuthService
 
 @RestController
@@ -46,4 +44,13 @@ class AuthController(
     } catch (e: AuthenticationFailedException) {
         ResponseEntity(HttpStatus.FORBIDDEN)
     }
+
+    @GetMapping("/validate")
+    fun validate(
+        @RequestParam("token") token: String
+    ): ResponseEntity<ValidationResponse> =
+        ResponseEntity(
+            ValidationResponse(authService.isTokenValid(token)),
+            HttpStatus.OK
+        )
 }

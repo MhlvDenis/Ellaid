@@ -1,18 +1,34 @@
 package ru.ellaid.auth.service
 
+import io.github.oshai.kotlinlogging.KotlinLogging
+import org.springframework.beans.factory.annotation.Value
+import org.springframework.context.annotation.Import
 import org.springframework.security.authentication.AuthenticationManager
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
 import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.stereotype.Service
 import ru.ellaid.auth.data.entity.User
 import ru.ellaid.auth.exception.AuthenticationFailedException
+import ru.ellaid.auth.exception.UserNotFoundException
+import ru.ellaid.jwt.auth.JwtAuthConfig
+import ru.ellaid.jwt.auth.exception.InvalidJwtTokenException
+import ru.ellaid.jwt.auth.helper.JwtAuthHelper
+
+private val logger = KotlinLogging.logger { }
 
 @Service
+@Import(
+    value = [
+        JwtAuthConfig::class,
+    ]
+)
 class AuthService(
     private val userService: UserService,
-    private val jwtService: JwtService,
+    private val jwtAuthHelper: JwtAuthHelper,
     private val authenticationManager: AuthenticationManager,
     private val passwordEncoder: PasswordEncoder,
+    @Value("\${app.security.issuer}")
+    private val issuer: String,
 ) {
 
     fun signUp(
@@ -29,9 +45,39 @@ class AuthService(
         )
 
         return if (auth.isAuthenticated) {
-            jwtService.generateToken(login, emptyMap())
+            val user = userService.getUserByLogin(login)
+            jwtAuthHelper.generateToken(
+                user.login,
+                user.id!!,
+                user.role.name
+            )
         } else {
             throw AuthenticationFailedException()
+        }
+    }
+
+    fun isTokenValid(
+        token: String
+    ): Boolean = try {
+        val claimUsername = jwtAuthHelper.extractUsername(token)
+        val claimUserId = jwtAuthHelper.extractUserId(token)
+        val claimRole = jwtAuthHelper.extractRole(token)
+        val claimIssuer = jwtAuthHelper.extractIssuer(token)
+        val isTokenExpired = jwtAuthHelper.isTokenExpired(token)
+
+        val actualUser = userService.getUserByLogin(claimUsername)
+        (actualUser.login == claimUsername) &&
+                (actualUser.id == claimUserId) &&
+                (actualUser.role.name == claimRole) &&
+                (issuer == claimIssuer) &&
+                (!isTokenExpired)
+    } catch (e: Exception) {
+        when (e) {
+            is UserNotFoundException, is InvalidJwtTokenException -> {
+                logger.error { "Got invalid jwt token: $token" }
+                false
+            }
+            else -> throw e
         }
     }
 }

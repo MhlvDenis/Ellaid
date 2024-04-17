@@ -7,3 +7,9 @@ spring:
       port: 27017
       database: comment-service-db
       auto-index-creation: true
+
+app:
+  security:
+    jwt-secret-key: ${JWT_SECRET_KEY}
+    issuer: ${JWT_ISSUER}
+    expiration-time-ms: ${JWT_EXPIRATION_TIME_MS}

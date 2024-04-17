@@ -8,6 +8,12 @@ spring:
       database: track-service-db
       auto-index-creation: true
 
+app:
+  security:
+    jwt-secret-key: ${JWT_SECRET_KEY}
+    issuer: ${JWT_ISSUER}
+    expiration-time-ms: ${JWT_EXPIRATION_TIME_MS}
+
 search:
   return-limit: 5
 

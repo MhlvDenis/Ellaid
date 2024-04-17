@@ -1,3 +1,12 @@
 rootProject.name = "backend"
 
-include("auth", "comment", "playlist", "track")
+include(
+    // Services
+    "auth",
+    "comment",
+    "playlist",
+    "track",
+
+    // Spring Boot Starters
+    "common:jwt-auth-starter"
+)

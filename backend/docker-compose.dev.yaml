@@ -2,13 +2,21 @@ version: "3.7"
 
 services:
 
+  gateway:
+    container_name: gateway
+    build: gateway
+    networks:
+      - ellaid-net
+    ports:
+      - "8080:8080"
+
   auth:
     container_name: auth
     build: auth
     networks:
       - ellaid-net
     ports:
-      - "8080:8080"
+      - "8081:8081"
     depends_on:
       - auth-mongodb
     environment:
@@ -24,7 +32,7 @@ services:
     networks:
       - ellaid-net
     ports:
-      - "8081:8081"
+      - "8082:8082"
     depends_on:
       - comment-mongodb
     environment:
@@ -38,7 +46,7 @@ services:
     networks:
       - ellaid-net
     ports:
-      - "8082:8082"
+      - "8083:8083"
     depends_on:
       - playlist-mongodb
     environment:
@@ -52,7 +60,7 @@ services:
     networks:
       - ellaid-net
     ports:
-      - "8083:8083"
+      - "8084:8084"
     depends_on:
       - track-mongodb
     environment:

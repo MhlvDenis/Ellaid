@@ -4,9 +4,12 @@ include(
     // Services
     "auth",
     "comment",
-    "eureka",
     "playlist",
     "track",
+
+    // Infrastructure
+    "eureka",
+    "gateway",
 
     // Spring Boot Starters
     "common:jwt-auth-starter"

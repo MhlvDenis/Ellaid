@@ -8,7 +8,7 @@ services:
     networks:
       - track-service-net
     ports:
-      - "8083:8083"
+      - "8084:8084"
     depends_on:
       - mongodb
     environment:

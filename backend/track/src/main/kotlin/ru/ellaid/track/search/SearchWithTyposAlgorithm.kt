@@ -29,7 +29,6 @@ class SearchWithTyposAlgorithm(
             .toList()
     }
 
-
     private data class VectorizedTrack(
         val track: Track,
         val distance: Int,

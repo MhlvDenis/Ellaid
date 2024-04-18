@@ -1,3 +1,5 @@
+server.port: 8080
+
 spring:
   application.name: auth
 
@@ -21,3 +23,8 @@ logging:
     org:
       springframework:
         security: DEBUG
+
+eureka:
+  client:
+    service-url:
+      defaultZone: http://eureka:8761/eureka

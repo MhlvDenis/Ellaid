@@ -4,6 +4,7 @@ include(
     // Services
     "auth",
     "comment",
+    "eureka",
     "playlist",
     "track",
 

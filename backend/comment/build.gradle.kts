@@ -7,6 +7,9 @@ dependencies {
 	implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
 	implementation("org.jetbrains.kotlin:kotlin-reflect")
 
+	// Service Discovery
+	implementation("org.springframework.cloud:spring-cloud-starter-netflix-eureka-client")
+
 	// Logger
 	implementation("io.github.oshai:kotlin-logging-jvm:5.1.0")
 

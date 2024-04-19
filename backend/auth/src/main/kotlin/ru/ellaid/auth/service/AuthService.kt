@@ -31,6 +31,10 @@ class AuthService(
     private val issuer: String,
 ) {
 
+    companion object {
+        private const val BEARER_PREFIX = "Bearer "
+    }
+
     fun signUp(
         login: String,
         rawPassword: String
@@ -57,8 +61,14 @@ class AuthService(
     }
 
     fun isTokenValid(
-        token: String
+        rawToken: String
     ): Boolean = try {
+        val token = if (rawToken.startsWith(BEARER_PREFIX)) {
+            rawToken.substring(BEARER_PREFIX.length)
+        } else {
+            throw InvalidJwtTokenException()
+        }
+
         val claimUsername = jwtAuthHelper.extractUsername(token)
         val claimUserId = jwtAuthHelper.extractUserId(token)
         val claimRole = jwtAuthHelper.extractRole(token)
@@ -74,7 +84,7 @@ class AuthService(
     } catch (e: Exception) {
         when (e) {
             is UserNotFoundException, is InvalidJwtTokenException -> {
-                logger.error { "Got invalid jwt token: $token" }
+                logger.error { "Got invalid jwt token: $rawToken" }
                 false
             }
             else -> throw e

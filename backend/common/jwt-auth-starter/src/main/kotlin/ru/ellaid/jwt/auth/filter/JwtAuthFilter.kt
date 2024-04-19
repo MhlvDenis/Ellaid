@@ -3,6 +3,7 @@ package ru.ellaid.jwt.auth.filter
 import jakarta.servlet.FilterChain
 import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse
+import org.springframework.http.HttpHeaders
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken
 import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.security.core.userdetails.User
@@ -16,7 +17,6 @@ class JwtAuthFilter(
 
     companion object {
         private const val BEARER_PREFIX = "Bearer "
-        private const val HEADER_NAME = "Authorization"
     }
 
     override fun doFilterInternal(
@@ -25,7 +25,7 @@ class JwtAuthFilter(
         filterChain: FilterChain
     ) {
 
-        val authHeader = request.getHeader(HEADER_NAME)
+        val authHeader = request.getHeader(HttpHeaders.AUTHORIZATION)
         if (authHeader == null || authHeader.isEmpty() || !authHeader.startsWith(BEARER_PREFIX)) {
             filterChain.doFilter(request, response)
             return

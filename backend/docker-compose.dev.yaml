@@ -41,7 +41,7 @@ services:
       JWT_EXPIRATION_TIME_MS: ${JWT_EXPIRATION_TIME_MS}
 
   playlist:
-    container_name: playlist-service
+    container_name: playlist
     build: playlist
     networks:
       - ellaid-net
@@ -55,7 +55,7 @@ services:
       JWT_EXPIRATION_TIME_MS: ${JWT_EXPIRATION_TIME_MS}
 
   track:
-    container_name: track-service
+    container_name: track
     build: track
     networks:
       - ellaid-net

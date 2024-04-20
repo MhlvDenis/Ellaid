@@ -1,0 +1,118 @@
+version: "3.7"
+
+services:
+
+  gateway:
+    container_name: gateway
+    build: gateway
+    networks:
+      - ellaid-net
+    ports:
+      - "8080:8080"
+
+  eureka:
+    container_name: eureka
+    build: eureka
+    networks:
+      - ellaid-net
+    ports:
+      - "8761:8761"
+
+  auth:
+    container_name: auth
+    build: auth
+    networks:
+      - ellaid-net
+    ports:
+      - "8081:8081"
+    depends_on:
+      - auth-mongodb
+    environment:
+      JWT_SECRET_KEY: ${JWT_SECRET_KEY}
+      JWT_ISSUER: ${JWT_ISSUER}
+      JWT_EXPIRATION_TIME_MS: ${JWT_EXPIRATION_TIME_MS}
+      ADMIN_USERNAME: ${ADMIN_USERNAME}
+      ADMIN_PASSWORD: ${ADMIN_PASSWORD}
+
+  comment:
+    container_name: comment
+    build: comment
+    networks:
+      - ellaid-net
+    ports:
+      - "8082:8082"
+    depends_on:
+      - comment-mongodb
+    environment:
+      JWT_SECRET_KEY: ${JWT_SECRET_KEY}
+      JWT_ISSUER: ${JWT_ISSUER}
+      JWT_EXPIRATION_TIME_MS: ${JWT_EXPIRATION_TIME_MS}
+
+  playlist:
+    container_name: playlist
+    build: playlist
+    networks:
+      - ellaid-net
+    ports:
+      - "8083:8083"
+    depends_on:
+      - playlist-mongodb
+    environment:
+      JWT_SECRET_KEY: ${JWT_SECRET_KEY}
+      JWT_ISSUER: ${JWT_ISSUER}
+      JWT_EXPIRATION_TIME_MS: ${JWT_EXPIRATION_TIME_MS}
+
+  track:
+    container_name: track
+    build: track
+    networks:
+      - ellaid-net
+    ports:
+      - "8084:8084"
+    depends_on:
+      - track-mongodb
+    environment:
+      JWT_SECRET_KEY: ${JWT_SECRET_KEY}
+      JWT_ISSUER: ${JWT_ISSUER}
+      JWT_EXPIRATION_TIME_MS: ${JWT_EXPIRATION_TIME_MS}
+
+  auth-mongodb:
+    container_name: auth-mongodb
+    image: mongo:latest
+    networks:
+      - ellaid-net
+    volumes:
+      - auth_data:/data/db
+
+  comment-mongodb:
+    container_name: comment-mongodb
+    image: mongo:latest
+    networks:
+      - ellaid-net
+    volumes:
+      - comment_data:/data/db
+
+  playlist-mongodb:
+    container_name: playlist-mongodb
+    image: mongo:latest
+    networks:
+      - ellaid-net
+    volumes:
+      - playlist_data:/data/db
+
+  track-mongodb:
+    container_name: track-mongodb
+    image: mongo:latest
+    networks:
+      - ellaid-net
+    volumes:
+      - track_data:/data/db
+
+networks:
+  ellaid-net:
+
+volumes:
+  auth_data:
+  comment_data:
+  playlist_data:
+  track_data:

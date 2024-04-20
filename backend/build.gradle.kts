@@ -28,6 +28,14 @@ subprojects {
         sourceCompatibility = JavaVersion.VERSION_17
     }
 
+    extra["springCloudVersion"] = "2023.0.1"
+
+    dependencyManagement {
+        imports {
+            mavenBom("org.springframework.cloud:spring-cloud-dependencies:${property("springCloudVersion")}")
+        }
+    }
+
     tasks.withType<KotlinCompile> {
         kotlinOptions {
             freeCompilerArgs += "-Xjsr305=strict"

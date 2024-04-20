@@ -1,0 +1,8 @@
+server.port: 8080
+
+spring.application.name: gateway
+
+eureka:
+  client:
+    service-url:
+      defaultZone: http://eureka:8761/eureka

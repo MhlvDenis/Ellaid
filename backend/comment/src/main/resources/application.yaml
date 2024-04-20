@@ -1,3 +1,5 @@
+server.port: 8082
+
 spring:
   application.name: comment
 
@@ -13,3 +15,8 @@ app:
     jwt-secret-key: ${JWT_SECRET_KEY}
     issuer: ${JWT_ISSUER}
     expiration-time-ms: ${JWT_EXPIRATION_TIME_MS}
+
+eureka:
+  client:
+    service-url:
+      defaultZone: http://eureka:8761/eureka

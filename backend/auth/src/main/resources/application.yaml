@@ -1,3 +1,5 @@
+server.port: 8081
+
 spring:
   application.name: auth
 
@@ -16,8 +18,13 @@ app:
     admin-username: ${ADMIN_USERNAME}
     admin-password: ${ADMIN_PASSWORD}
 
-logging:
-  level:
-    org:
-      springframework:
-        security: DEBUG
+#logging:
+#  level:
+#    org:
+#      springframework:
+#        security: DEBUG
+
+eureka:
+  client:
+    service-url:
+      defaultZone: http://eureka:8761/eureka

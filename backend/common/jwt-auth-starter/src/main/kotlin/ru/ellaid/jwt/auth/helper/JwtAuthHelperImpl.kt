@@ -4,8 +4,8 @@ import io.github.oshai.kotlinlogging.KotlinLogging
 import io.jsonwebtoken.*
 import io.jsonwebtoken.io.Decoders
 import io.jsonwebtoken.security.Keys
+import io.jsonwebtoken.security.SecurityException
 import ru.ellaid.jwt.auth.exception.InvalidJwtTokenException
-import java.security.SignatureException
 import java.util.*
 
 private val logger = KotlinLogging.logger { }
@@ -71,7 +71,7 @@ class JwtAuthHelperImpl(
         logger.error { e.message }
         when (e) {
             is ExpiredJwtException, is UnsupportedJwtException,
-            is MalformedJwtException, is SignatureException,
+            is MalformedJwtException, is SecurityException,
             is IllegalArgumentException -> throw InvalidJwtTokenException()
             else -> throw e
         }

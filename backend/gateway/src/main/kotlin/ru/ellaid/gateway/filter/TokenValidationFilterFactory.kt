@@ -2,6 +2,7 @@ package ru.ellaid.gateway.filter
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 import io.github.oshai.kotlinlogging.KotlinLogging
+import org.springframework.cloud.client.loadbalancer.reactive.ReactorLoadBalancerExchangeFilterFunction
 import org.springframework.cloud.gateway.filter.GatewayFilter
 import org.springframework.cloud.gateway.filter.factory.AbstractGatewayFilterFactory
 import org.springframework.http.HttpHeaders
@@ -14,15 +15,20 @@ import reactor.core.publisher.Mono
 private val logger = KotlinLogging.logger { }
 
 @Component
-class TokenValidationFilterFactory : AbstractGatewayFilterFactory<TokenValidationFilterFactory.Config>() {
+class TokenValidationFilterFactory(
+    loadBalancer: ReactorLoadBalancerExchangeFilterFunction,
+) : AbstractGatewayFilterFactory<TokenValidationFilterFactory.Config>() {
 
     companion object {
-        private const val DOMAIN = "http://gateway:8080"
+        private const val DOMAIN = "http://auth"
         private const val VALIDATION_ENDPOINT = "/auth/validate"
         private const val TOKEN_PARAM = "token"
     }
 
-    private val client = WebClient.create(DOMAIN)
+    private val client = WebClient.builder()
+        .filter(loadBalancer)
+        .baseUrl(DOMAIN)
+        .build()
 
     override fun apply(
         config: Config?
@@ -30,7 +36,7 @@ class TokenValidationFilterFactory : AbstractGatewayFilterFactory<TokenValidatio
         val request = exchange.request
         val terminateResponse: () -> Mono<Void> = {
             exchange.response.apply {
-                statusCode = HttpStatus.UNAUTHORIZED
+                statusCode = HttpStatus.FORBIDDEN
             }.setComplete()
         }
 
@@ -45,6 +51,10 @@ class TokenValidationFilterFactory : AbstractGatewayFilterFactory<TokenValidatio
             .uri { it.path(VALIDATION_ENDPOINT).queryParam(TOKEN_PARAM, token).build() }
             .retrieve()
             .bodyToMono<ValidationResponse>()
+            .onErrorResume { error ->
+                logger.error { "Error status from auth service ${error.message}" }
+                Mono.just(ValidationResponse(false))
+            }
             .flatMap { response ->
                 return@flatMap if (response.valid) {
                     chain.filter(exchange)

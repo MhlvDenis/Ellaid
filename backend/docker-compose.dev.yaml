@@ -10,6 +10,14 @@ services:
     ports:
       - "8080:8080"
 
+  eureka:
+    container_name: eureka
+    build: eureka
+    networks:
+      - ellaid-net
+    ports:
+      - "8761:8761"
+
   auth:
     container_name: auth
     build: auth
@@ -99,14 +107,6 @@ services:
       - ellaid-net
     volumes:
       - track_data:/data/db
-
-  eureka:
-    container_name: eureka
-    build: eureka
-    networks: 
-      - ellaid-net
-    ports:
-      - "8761:8761"
 
 networks:
   ellaid-net:

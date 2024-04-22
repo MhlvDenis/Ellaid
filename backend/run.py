@@ -1,8 +1,11 @@
 import os
 import platform
 
+gradlew = '.\\gradlew.bat' if platform.system() == 'Windows' else './gradlew'
+cur_dir = '.\\' if platform.system() == 'Windows' else './'
+slash = '\\' if platform.system() == 'Windows' else '/'
 commands = ['build', 'image', 'run']
-services = ['auth', 'comment', 'eureka', 'gateway', 'playlist', 'track']
+services = ['auth', 'comment', 'eureka', 'gateway', 'playlist', 'storage', 'track']
 
 
 def build_service(service):
@@ -12,13 +15,15 @@ def build_service(service):
 
 
 def build_service_image(service):
-    os.system(f'docker compose -f /{service}/docker-compose.dev.yaml --env-file=/{service}/.env build')
+    os.system(f'docker compose -f {cur_dir}{service}{slash}docker-compose.dev.yaml'
+              f' --env-file={cur_dir}{service}{slash}.env build')
     print(f'{service} docker image is built')
 
 
 def run_service(service, detached=True):
     suffix = ' -d' if detached else ''
-    os.system(f'docker compose -f /{service}/docker-compose.dev.yaml --env-file=/{service}/.env up' + suffix)
+    os.system(f'docker compose -f {cur_dir}{service}{slash}docker-compose.dev.yaml'
+              f' --env-file={cur_dir}{service}{slash}.env up' + suffix)
     print(f'{service} started')
 
 

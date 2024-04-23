@@ -33,6 +33,7 @@ open class SecurityConfig(
             .authorizeHttpRequests { request -> request
                 .requestMatchers(HttpMethod.GET, "/track").permitAll()
                 .requestMatchers(HttpMethod.POST, "/track").hasRole(ADMIN)
+                .requestMatchers(HttpMethod.GET, "/search").permitAll()
             }
             .sessionManagement { it.sessionCreationPolicy(SessionCreationPolicy.STATELESS) }
             .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter::class.java)

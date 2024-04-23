@@ -67,6 +67,11 @@ open class RouteConfig {
                     .method(HttpMethod.GET)
                     .uri("lb://track")
             }
+            .route("search_route") { route ->
+                route.path("/search").and()
+                    .method(HttpMethod.GET)
+                    .uri("lb://track")
+            }
             // Storage
             .route("storage_upload_route") { route ->
                 route.path("/storage-api/upload").and()

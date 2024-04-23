@@ -2,7 +2,7 @@ version: "3.7"
 
 services:
   app:
-    container_name: auth-service
+    container_name: standalone-auth-service
     build: .
     restart: always
     networks:
@@ -19,7 +19,7 @@ services:
       ADMIN_PASSWORD: ${ADMIN_PASSWORD}
 
   mongodb:
-    container_name: auth-mongodb
+    container_name: standalone-auth-mongodb
     image: mongo:latest
     restart: always
     networks:

@@ -16,6 +16,7 @@ open class RouteConfig {
         builder: RouteLocatorBuilder,
         tokenValidationFilterFactory: TokenValidationFilterFactory
     ): RouteLocator {
+
         val createValidationFilter: () -> GatewayFilter = {
             tokenValidationFilterFactory.apply(TokenValidationFilterFactory.Config())
         }
@@ -65,6 +66,19 @@ open class RouteConfig {
                 route.path("/track").and()
                     .method(HttpMethod.GET)
                     .uri("lb://track")
+            }
+            // Storage
+            .route("storage_upload_route") { route ->
+                route.path("/storage-api/upload").and()
+                    .method(HttpMethod.POST)
+                    .filters { it.filter(createValidationFilter()) }
+                    .uri("lb://storage")
+            }
+            .route("storage_download_route") { route ->
+                route.path("/storage-api/download/**").and()
+                    .method(HttpMethod.GET)
+                    .filters { it.stripPrefix(2) }
+                    .uri("http://minio:9000")
             }
             .build()
     }

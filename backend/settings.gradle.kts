@@ -5,6 +5,7 @@ include(
     "auth",
     "comment",
     "playlist",
+    "storage",
     "track",
 
     // Infrastructure

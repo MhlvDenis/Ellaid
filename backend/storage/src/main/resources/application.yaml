@@ -1,0 +1,25 @@
+server.port: 8085
+
+spring.application.name: storage
+
+host:
+  url: ${HOST_URL}
+
+minio:
+  url: ${MINIO_URL}
+
+  access-key: ${MINIO_ACCESS_KEY}
+  secret-key: ${MINIO_SECRET_KEY}
+
+  bucket: ${MINIO_BUCKET}
+
+app:
+  security:
+    jwt-secret-key: ${JWT_SECRET_KEY}
+    issuer: ${JWT_ISSUER}
+    expiration-time-ms: ${JWT_EXPIRATION_TIME_MS}
+
+eureka:
+  client:
+    service-url:
+      defaultZone: http://eureka:8761/eureka

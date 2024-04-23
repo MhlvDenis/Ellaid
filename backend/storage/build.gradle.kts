@@ -1,8 +1,8 @@
 dependencies {
-//    implementation(project(":common:jwt-auth-starter"))
+    implementation(project(":common:jwt-auth-starter"))
 
     implementation("org.springframework.boot:spring-boot-starter-web")
-//    implementation("org.springframework.boot:spring-boot-starter-security")
+    implementation("org.springframework.boot:spring-boot-starter-security")
 
     // MinIO
     implementation("io.minio:minio:8.5.9")

@@ -2,7 +2,7 @@ version: "3.7"
 
 services:
   app:
-    container_name: playlist-service
+    container_name: standalone-playlist-service
     build: .
     restart: always
     networks:
@@ -17,7 +17,7 @@ services:
       JWT_EXPIRATION_TIME_MS: ${JWT_EXPIRATION_TIME_MS}
 
   mongodb:
-    container_name: playlist-mongodb
+    container_name: standalone-playlist-mongodb
     image: mongo:latest
     restart: always
     networks:

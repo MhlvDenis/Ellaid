@@ -6,7 +6,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import ru.ellaid.app.network.auth.AuthClient
-import ru.ellaid.app.network.auth.error.LoginStatus
+import ru.ellaid.app.network.auth.status.LoginStatus
 import javax.inject.Inject
 
 data class LoggedInUserView(

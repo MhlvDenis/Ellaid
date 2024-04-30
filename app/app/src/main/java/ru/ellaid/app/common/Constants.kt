@@ -1,8 +1,8 @@
-package ru.ellaid.app.other
+package ru.ellaid.app.common
 
 object Constants {
 
-    const val HOST = "10.0.2.2"
+    const val HOST = "localhost"
 
     const val SCHEME = "http"
 

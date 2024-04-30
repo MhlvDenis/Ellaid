@@ -9,9 +9,9 @@ import android.support.v4.media.session.MediaControllerCompat
 import android.support.v4.media.session.PlaybackStateCompat
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import ru.ellaid.app.other.Constants.NETWORK_ERROR
-import ru.ellaid.app.other.Event
-import ru.ellaid.app.other.Resource
+import ru.ellaid.app.common.Constants.NETWORK_ERROR
+import ru.ellaid.app.common.Event
+import ru.ellaid.app.common.Resource
 
 class MusicServiceConnection(
     context: Context

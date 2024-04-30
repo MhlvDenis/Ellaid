@@ -12,7 +12,7 @@ import ru.ellaid.app.R
 import ru.ellaid.app.data.entity.Track
 import ru.ellaid.app.exoplayer.isPlaying
 import ru.ellaid.app.exoplayer.toSong
-import ru.ellaid.app.other.Status
+import ru.ellaid.app.common.Status
 import ru.ellaid.app.ui.viewmodels.MainViewModel
 import ru.ellaid.app.ui.viewmodels.SongViewModel
 import dagger.hilt.android.AndroidEntryPoint

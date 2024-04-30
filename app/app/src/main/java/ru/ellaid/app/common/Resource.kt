@@ -1,4 +1,4 @@
-package ru.ellaid.app.other
+package ru.ellaid.app.common
 
 data class Resource<out T>(
     val status: Status,

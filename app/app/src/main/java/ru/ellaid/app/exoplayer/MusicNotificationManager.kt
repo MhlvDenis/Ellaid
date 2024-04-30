@@ -12,8 +12,8 @@ import com.bumptech.glide.request.transition.Transition
 import com.google.android.exoplayer2.Player
 import com.google.android.exoplayer2.ui.PlayerNotificationManager
 import ru.ellaid.app.R
-import ru.ellaid.app.other.Constants.NOTIFICATION_CHANNEL_ID
-import ru.ellaid.app.other.Constants.NOTIFICATION_ID
+import ru.ellaid.app.common.Constants.NOTIFICATION_CHANNEL_ID
+import ru.ellaid.app.common.Constants.NOTIFICATION_ID
 
 class MusicNotificationManager(
     private val context: Context,

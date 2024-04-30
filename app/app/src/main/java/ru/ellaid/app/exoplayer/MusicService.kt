@@ -18,13 +18,12 @@ import com.google.android.exoplayer2.ext.mediasession.TimelineQueueNavigator
 import com.google.android.exoplayer2.upstream.DefaultDataSource
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.*
-import ru.ellaid.app.data.entity.Comment
+import ru.ellaid.app.common.Constants.MEDIA_ROOT_ID
+import ru.ellaid.app.common.Constants.NETWORK_ERROR
 import ru.ellaid.app.data.entity.Track
 import ru.ellaid.app.exoplayer.callbacks.MusicPlaybackPreparer
 import ru.ellaid.app.exoplayer.callbacks.MusicPlayerEventListener
 import ru.ellaid.app.exoplayer.callbacks.MusicPlayerNotificationListener
-import ru.ellaid.app.other.Constants.MEDIA_ROOT_ID
-import ru.ellaid.app.other.Constants.NETWORK_ERROR
 import javax.inject.Inject
 
 private const val SERVICE_TAG = "MusicService"
@@ -61,15 +60,6 @@ class MusicService : MediaBrowserServiceCompat() {
 
     companion object {
         var curSongDuration = 0L
-            private set
-
-        lateinit var loadCommentsForTrack: (Int, (List<Comment>) -> Unit) -> Unit
-            private set
-
-        lateinit var uploadComment: (Int, String) -> Unit
-            private set
-
-        lateinit var uploadCommentAndUpdate: (Int, String, (List<Comment>) -> Unit) -> Unit
             private set
 
         lateinit var requestSearch: (String, (List<Track>) -> Unit) -> Unit
@@ -129,25 +119,6 @@ class MusicService : MediaBrowserServiceCompat() {
                     false
                 )
                 isPlayerInitialized = true
-            }
-        }
-
-        loadCommentsForTrack = { trackId, applyComments ->
-            serviceScope.launch {
-                musicSource.fetchCommentData(trackId, applyComments)
-            }
-        }
-
-        uploadComment = { trackId, content ->
-            serviceScope.launch {
-                musicSource.uploadComment(trackId, content)
-            }
-        }
-
-        uploadCommentAndUpdate = { trackId, content, applyComments ->
-            serviceScope.launch {
-                musicSource.uploadComment(trackId, content)
-                musicSource.fetchCommentData(trackId, applyComments)
             }
         }
 

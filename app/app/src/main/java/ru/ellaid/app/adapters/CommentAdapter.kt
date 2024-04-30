@@ -1,8 +1,10 @@
 package ru.ellaid.app.adapters
 
+import android.os.Build
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.annotation.RequiresApi
 import androidx.recyclerview.widget.RecyclerView
 import ru.ellaid.app.R
 import ru.ellaid.app.data.entity.Comment
@@ -31,6 +33,7 @@ class CommentAdapter : RecyclerView.Adapter<CommentAdapter.CommentViewHolder>() 
         return comments.size
     }
 
+    @RequiresApi(Build.VERSION_CODES.O)
     override fun onBindViewHolder(holder: CommentViewHolder, position: Int) {
         val binding = CommentItemBinding.bind(holder.itemView)
         val comment = comments[position]
@@ -39,9 +42,7 @@ class CommentAdapter : RecyclerView.Adapter<CommentAdapter.CommentViewHolder>() 
         binding.apply {
             tvUsername.text = comment.username
             tvDatetime.text = dateFormat.format(
-                Date(
-                    comment.publicationDatetime?.time ?: 0
-                )
+                Date(comment.publicationDatetime.epochSecond)
             )
             tvContent.text = comment.content
         }

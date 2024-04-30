@@ -13,7 +13,7 @@ import okhttp3.Request
 import okhttp3.Response
 import ru.ellaid.app.data.entity.Track
 import ru.ellaid.app.network.CredentialsHolder
-import ru.ellaid.app.other.Constants
+import ru.ellaid.app.common.Constants
 import java.io.IOException
 import java.net.HttpURLConnection
 import java.util.concurrent.CountDownLatch

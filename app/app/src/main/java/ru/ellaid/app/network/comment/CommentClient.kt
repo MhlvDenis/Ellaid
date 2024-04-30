@@ -1,10 +1,9 @@
 package ru.ellaid.app.network.comment
 
 import android.util.Log
+import com.google.common.net.HttpHeaders
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.withContext
 import okhttp3.Call
 import okhttp3.Callback
 import okhttp3.HttpUrl
@@ -13,140 +12,112 @@ import okhttp3.OkHttpClient
 import okhttp3.Request
 import okhttp3.RequestBody.Companion.toRequestBody
 import okhttp3.Response
+import ru.ellaid.app.common.Constants
 import ru.ellaid.app.data.entity.Comment
 import ru.ellaid.app.network.CredentialsHolder
 import ru.ellaid.app.network.comment.cache.CommentCache
-import ru.ellaid.app.network.comment.error.AddCommentError
 import ru.ellaid.app.network.comment.form.AddCommentForm
-import ru.ellaid.app.other.Constants
+import ru.ellaid.app.network.comment.status.AddCommentStatus
 import java.io.IOException
 import java.net.HttpURLConnection
-import java.util.concurrent.CountDownLatch
 import javax.inject.Inject
 
 class CommentClient @Inject constructor(
     private val client: OkHttpClient,
 ) {
 
+    companion object {
+        private const val ADD_COMMENT_PATH = "/comment"
+        private const val FETCH_COMMENTS_PATH = "/comments"
+    }
+
     private val commentCache: CommentCache = CommentCache()
 
-    suspend fun loadAllComments(
-        trackId: String
-    ): List<Comment> = commentCache.loadFromCache(trackId) ?: try {
-        val url = HttpUrl.Builder()
-            .scheme(Constants.SCHEME)
-            .host(Constants.HOST)
-            .port(Constants.PORT)
-            .addPathSegment("elysium")
-            .addPathSegment("comment")
-            .addPathSegments("loadAllComments")
-            .addQueryParameter("trackId", trackId)
-            .build()
-        val request = Request
-            .Builder()
-            .url(url)
-            .header("Authorization", CredentialsHolder.token!!)
-            .get()
-            .build()
-        var result = emptyList<Comment>()
-        val countDownLatch = CountDownLatch(1)
-        client.newCall(request).enqueue(object : Callback {
-            override fun onFailure(call: Call, e: IOException) {
-                countDownLatch.countDown()
-            }
+    fun fetchComments(
+        trackId: String,
+        callback: (List<Comment>) -> Unit,
+    ) {
+        val cached = commentCache.loadFromCache(trackId)
+        if (cached != null) {
+            callback(cached)
+            return
+        }
 
-            override fun onResponse(call: Call, response: Response) {
-                when (response.code) {
-                    (HttpURLConnection.HTTP_UNAUTHORIZED) -> {
-                        result = emptyList()
-                        Log.println(
-                            Log.WARN,
-                            "loadAllComments",
-                            "You are suddenly unauthorized"
-                        )
-                    }
+        try {
+            val url = HttpUrl.Builder()
+                .scheme(Constants.SCHEME)
+                .host(Constants.HOST)
+                .addPathSegment(FETCH_COMMENTS_PATH)
+                .addQueryParameter("trackId", trackId)
+                .build()
 
-                    (HttpURLConnection.HTTP_NO_CONTENT) -> {
-                        result = emptyList()
-                        Log.println(
-                            Log.ERROR,
-                            "No more comments",
-                            "Already loaded all comments"
-                        )
-                    }
+            val request = Request.Builder()
+                .url(url)
+                .get()
+                .build()
 
-                    (HttpURLConnection.HTTP_OK) -> {
-                        val typeToken = object : TypeToken<List<Comment>>() {}.type
-                        result = Gson().fromJson(response.body!!.string(), typeToken)
-                        Log.println(Log.INFO, "Got comments", result.size.toString())
-                        for (comment in result) {
-                            Log.println(Log.INFO, "comment", Gson().toJson(comment))
+            client.newCall(request).enqueue(object : Callback {
+                override fun onFailure(call: Call, e: IOException) {
+                    callback(emptyList())
+                }
+
+                override fun onResponse(call: Call, response: Response) {
+                    when (response.code) {
+                        HttpURLConnection.HTTP_OK -> {
+                            val typeToken = object : TypeToken<List<Comment>>() {}.type
+                            val comments: List<Comment> = Gson().fromJson(response.body!!.string(), typeToken)
+                            commentCache.addToCache(trackId, comments)
+                            callback(comments)
+                        }
+                        else -> {
+                            Log.println(
+                                Log.ERROR, "CommentClient",
+                                "Unknown response from /comments: $response"
+                            )
+                            callback(emptyList())
                         }
                     }
                 }
-                countDownLatch.countDown()
-            }
-        })
-        withContext(Dispatchers.IO) {
-            countDownLatch.await()
+            })
+        } catch (e: Exception) {
+            Log.println(
+                Log.ERROR,
+                "CommentClient",
+                "Error during fetch comments for track $trackId: $e"
+            )
+            callback(emptyList())
         }
-        commentCache.addToCache(trackId, result)
-
-        result
-    } catch (e: Exception) {
-        emptyList()
     }
 
-    suspend fun addComment(
+    fun addComment(
         trackId: String,
-        content: String
-    ): AddCommentError {
-        val jsonString = Gson().toJson(AddCommentForm(trackId, content))
-        Log.println(Log.INFO, "addComment", jsonString)
-        val body = jsonString.toRequestBody("application/json".toMediaTypeOrNull())
+        content: String,
+        callback: (AddCommentStatus) -> Unit
+    ) {
         val request = Request.Builder()
-            .url(Constants.BASE_URL + "comment/addComment")
-            .post(body)
-            .addHeader("Authorization", CredentialsHolder.token!!)
+            .url(Constants.BASE_URL + ADD_COMMENT_PATH)
+            .post(Gson().toJson(AddCommentForm(trackId, content))
+                .toRequestBody("application/json".toMediaTypeOrNull()))
+            .addHeader(HttpHeaders.AUTHORIZATION, CredentialsHolder.token!!)
             .build()
-        var result = AddCommentError.OK
-        var newComment: Comment? = null
-        val countDownLatch = CountDownLatch(1)
+
         client.newCall(request).enqueue(object : Callback {
             override fun onFailure(call: Call, e: IOException) {
-                Log.d("addComment", "Call Failure")
-                result = AddCommentError.CALL_FAILURE
-                countDownLatch.countDown()
+                callback(AddCommentStatus.CALL_FAILURE)
             }
 
             override fun onResponse(call: Call, response: Response) {
                 when (response.code) {
                     HttpURLConnection.HTTP_OK -> {
                         val typeToken = object : TypeToken<Comment>() {}.type
-                        newComment = Gson().fromJson(response.body!!.string(), typeToken)
-                        Log.d("addComment", "Success")
-                        Log.d("addComment", newComment.toString())
+                        val newComment: Comment = Gson().fromJson(response.body!!.string(), typeToken)
+                        commentCache.updateCache(trackId, newComment)
+                        callback(AddCommentStatus.OK)
                     }
-
-                    HttpURLConnection.HTTP_UNAUTHORIZED -> {
-                        Log.d("addComment", "Unauthorized")
-                        result = AddCommentError.UNAUTHORIZED
-                    }
-
-                    else -> {
-                        Log.d("addComment", "Unknown Response")
-                        result = AddCommentError.UNKNOWN_RESPONSE
-                    }
+                    HttpURLConnection.HTTP_FORBIDDEN -> callback(AddCommentStatus.UNAUTHORIZED)
+                    else -> callback(AddCommentStatus.UNKNOWN_RESPONSE)
                 }
-                countDownLatch.countDown()
             }
         })
-        withContext(Dispatchers.IO) {
-            countDownLatch.await()
-        }
-        if (result == AddCommentError.OK) {
-            commentCache.updateCache(trackId, newComment)
-        }
-        return result
     }
 }

@@ -1,4 +1,4 @@
-package ru.ellaid.app.other
+package ru.ellaid.app.common
 
 open class Event<out T>(
     private val data: T

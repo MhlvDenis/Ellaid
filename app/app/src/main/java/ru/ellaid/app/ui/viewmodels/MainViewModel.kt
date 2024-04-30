@@ -7,8 +7,8 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import ru.ellaid.app.data.entity.Track
-import ru.ellaid.app.other.Constants.MEDIA_ROOT_ID
-import ru.ellaid.app.other.Resource
+import ru.ellaid.app.common.Constants.MEDIA_ROOT_ID
+import ru.ellaid.app.common.Resource
 import ru.ellaid.app.exoplayer.MusicServiceConnection
 import ru.ellaid.app.exoplayer.isPlayEnabled
 import ru.ellaid.app.exoplayer.isPlaying

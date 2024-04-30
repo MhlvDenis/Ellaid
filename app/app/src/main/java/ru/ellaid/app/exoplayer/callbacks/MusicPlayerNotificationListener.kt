@@ -4,7 +4,7 @@ import android.app.Notification
 import android.content.Intent
 import androidx.core.content.ContextCompat
 import com.google.android.exoplayer2.ui.PlayerNotificationManager
-import ru.ellaid.app.other.Constants.NOTIFICATION_ID
+import ru.ellaid.app.common.Constants.NOTIFICATION_ID
 import ru.ellaid.app.exoplayer.MusicService
 
 class MusicPlayerNotificationListener(

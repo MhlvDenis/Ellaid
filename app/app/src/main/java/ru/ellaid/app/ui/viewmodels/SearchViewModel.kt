@@ -5,7 +5,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import ru.ellaid.app.data.entity.Track
 import ru.ellaid.app.exoplayer.MusicService
-import ru.ellaid.app.other.Resource
+import ru.ellaid.app.common.Resource
 
 class SearchViewModel : ViewModel() {
     private val _mediaItems = MutableLiveData<Resource<List<Track>>>()

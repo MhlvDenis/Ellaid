@@ -1,4 +1,4 @@
-package ru.ellaid.app.network.auth.error
+package ru.ellaid.app.network.auth.status
 
 enum class RegisterStatus {
     OK,

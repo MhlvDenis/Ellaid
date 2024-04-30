@@ -4,25 +4,34 @@ import android.support.v4.media.MediaBrowserCompat
 import android.support.v4.media.MediaBrowserCompat.MediaItem.FLAG_PLAYABLE
 import android.support.v4.media.MediaDescriptionCompat
 import android.support.v4.media.MediaMetadataCompat
-import android.support.v4.media.MediaMetadataCompat.*
+import android.support.v4.media.MediaMetadataCompat.Builder
+import android.support.v4.media.MediaMetadataCompat.METADATA_KEY_ALBUM_ART_URI
+import android.support.v4.media.MediaMetadataCompat.METADATA_KEY_ARTIST
+import android.support.v4.media.MediaMetadataCompat.METADATA_KEY_DISPLAY_DESCRIPTION
+import android.support.v4.media.MediaMetadataCompat.METADATA_KEY_DISPLAY_ICON_URI
+import android.support.v4.media.MediaMetadataCompat.METADATA_KEY_DISPLAY_SUBTITLE
+import android.support.v4.media.MediaMetadataCompat.METADATA_KEY_DISPLAY_TITLE
+import android.support.v4.media.MediaMetadataCompat.METADATA_KEY_MEDIA_ID
+import android.support.v4.media.MediaMetadataCompat.METADATA_KEY_MEDIA_URI
+import android.support.v4.media.MediaMetadataCompat.METADATA_KEY_TITLE
 import androidx.core.net.toUri
 import com.google.android.exoplayer2.MediaItem
 import com.google.android.exoplayer2.source.ConcatenatingMediaSource
 import com.google.android.exoplayer2.source.ProgressiveMediaSource
 import com.google.android.exoplayer2.upstream.DefaultDataSource
-import ru.ellaid.app.network.track.TrackClient
-import ru.ellaid.app.exoplayer.State.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
-import ru.ellaid.app.data.entity.Comment
+import ru.ellaid.app.common.Constants.TYPOS_IN_SEARCH
 import ru.ellaid.app.data.entity.Track
-import ru.ellaid.app.network.comment.CommentClient
-import ru.ellaid.app.other.Constants.TYPOS_IN_SEARCH
+import ru.ellaid.app.exoplayer.State.STATE_CREATED
+import ru.ellaid.app.exoplayer.State.STATE_ERROR
+import ru.ellaid.app.exoplayer.State.STATE_INITIALIZED
+import ru.ellaid.app.exoplayer.State.STATE_INITIALIZING
+import ru.ellaid.app.network.track.TrackClient
 import javax.inject.Inject
 
 class MusicSource @Inject constructor(
     private val trackClient: TrackClient,
-    private val commentClient: CommentClient
 ) {
     var songs = emptyList<MediaMetadataCompat>()
 
@@ -43,15 +52,6 @@ class MusicSource @Inject constructor(
                 .build()
         }
         state = STATE_INITIALIZED
-    }
-
-    suspend fun fetchCommentData(trackId: Int, applyComments: (List<Comment>) -> Unit) = withContext(Dispatchers.IO) {
-        val allComments = commentClient.loadAllComments(trackId)
-        applyComments(allComments)
-    }
-
-    suspend fun uploadComment(trackId: Int, content: String) {
-        commentClient.addComment(trackId, content)
     }
 
     suspend fun provideSearch(request: String, applySongs: (List<Track>) -> Unit) {
@@ -96,15 +96,14 @@ class MusicSource @Inject constructor(
             }
         }
 
-    fun whenReady(action: (Boolean) -> Unit): Boolean {
-        return if (state == STATE_CREATED || state == STATE_INITIALIZING) {
-            onReadyListeners += action
-            false
-        } else {
-            action(state == STATE_INITIALIZED)
-            true
+    fun whenReady(action: (Boolean) -> Unit): Boolean =
+        (state == STATE_CREATED || state == STATE_INITIALIZING).also { isReady ->
+            if (isReady) {
+                action(state == STATE_INITIALIZED)
+            } else {
+                onReadyListeners += action
+            }
         }
-    }
 }
 
 enum class State {

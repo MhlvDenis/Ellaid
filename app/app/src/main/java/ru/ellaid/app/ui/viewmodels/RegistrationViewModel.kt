@@ -6,7 +6,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import ru.ellaid.app.network.auth.AuthClient
-import ru.ellaid.app.network.auth.error.RegisterStatus
+import ru.ellaid.app.network.auth.status.RegisterStatus
 import javax.inject.Inject
 
 data class RegisteredUser(

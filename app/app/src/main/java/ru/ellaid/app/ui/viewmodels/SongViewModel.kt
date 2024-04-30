@@ -4,13 +4,13 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import ru.ellaid.app.exoplayer.MusicService
-import ru.ellaid.app.exoplayer.MusicServiceConnection
-import ru.ellaid.app.exoplayer.currentPlaybackPosition
-import ru.ellaid.app.other.Constants.UPDATE_PLAYER_POSITION_INTERVAL
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import ru.ellaid.app.common.Constants.UPDATE_PLAYER_POSITION_INTERVAL
+import ru.ellaid.app.exoplayer.MusicService
+import ru.ellaid.app.exoplayer.MusicServiceConnection
+import ru.ellaid.app.exoplayer.currentPlaybackPosition
 import javax.inject.Inject
 
 @HiltViewModel

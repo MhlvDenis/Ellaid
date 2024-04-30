@@ -9,10 +9,10 @@ import okhttp3.Request
 import okhttp3.RequestBody.Companion.toRequestBody
 import okhttp3.Response
 import ru.ellaid.app.network.CredentialsHolder
-import ru.ellaid.app.network.auth.error.LoginStatus
-import ru.ellaid.app.network.auth.error.RegisterStatus
+import ru.ellaid.app.network.auth.status.LoginStatus
+import ru.ellaid.app.network.auth.status.RegisterStatus
 import ru.ellaid.app.network.auth.form.LoginPasswordForm
-import ru.ellaid.app.other.Constants
+import ru.ellaid.app.common.Constants
 import java.io.IOException
 import java.net.HttpURLConnection
 import javax.inject.Inject

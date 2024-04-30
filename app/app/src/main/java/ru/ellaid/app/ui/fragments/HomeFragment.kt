@@ -8,7 +8,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import ru.ellaid.app.R
 import ru.ellaid.app.adapters.TrackAdapter
-import ru.ellaid.app.other.Status
+import ru.ellaid.app.common.Status
 import ru.ellaid.app.ui.viewmodels.MainViewModel
 import dagger.hilt.android.AndroidEntryPoint
 import ru.ellaid.app.databinding.FragmentHomeBinding

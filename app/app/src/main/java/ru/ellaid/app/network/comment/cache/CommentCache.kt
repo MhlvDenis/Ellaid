@@ -12,7 +12,10 @@ class CommentCache {
     private val cacheList: MutableList<String> = ArrayList()
     private val cacheLock: Lock = ReentrantLock()
 
-    fun addToCache(trackId: String, comments: List<Comment>) {
+    fun addToCache(
+        trackId: String,
+        comments: List<Comment>
+    ) {
         if (comments.isEmpty()) {
             return
         }

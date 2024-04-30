@@ -11,15 +11,15 @@ import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import dagger.hilt.android.AndroidEntryPoint
 import ru.ellaid.app.R
 import ru.ellaid.app.adapters.CommentAdapter
+import ru.ellaid.app.common.Status
 import ru.ellaid.app.databinding.FragmentCommentsBinding
 import ru.ellaid.app.exoplayer.toSong
-import ru.ellaid.app.other.Status
 import ru.ellaid.app.ui.viewmodels.CommentViewModel
 import javax.inject.Inject
 
 @AndroidEntryPoint
 class CommentsFragment(
-    private val trackId: String
+    private val trackId: String,
 ) : BottomSheetDialogFragment(R.layout.fragment_comments) {
     private lateinit var binding: FragmentCommentsBinding
     private lateinit var commentViewModel: CommentViewModel
@@ -35,7 +35,7 @@ class CommentsFragment(
         setupRecyclerView()
         subscribeToObservers()
 
-        commentViewModel.loadComments(trackId.toInt())
+        commentViewModel.loadComments(trackId)
 
         with (binding) {
             ivSendComment.setOnClickListener {
@@ -44,7 +44,7 @@ class CommentsFragment(
                     val content = evInputComment.text!!.toString()
                     evInputComment.text!!.clear()
                     closeKeyboard()
-                    commentViewModel.uploadCommentAndUpdate(trackId.toInt(), content)
+                    commentViewModel.uploadCommentAndUpdate(trackId, content)
                 }
             }
         }

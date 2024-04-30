@@ -11,7 +11,7 @@ import dagger.hilt.android.AndroidEntryPoint
 import ru.ellaid.app.R
 import ru.ellaid.app.adapters.SearchAdapter
 import ru.ellaid.app.databinding.FragmentSearchBinding
-import ru.ellaid.app.other.Status
+import ru.ellaid.app.common.Status
 import ru.ellaid.app.ui.viewmodels.MainViewModel
 import ru.ellaid.app.ui.viewmodels.SearchViewModel
 import javax.inject.Inject

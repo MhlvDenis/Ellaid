@@ -1,6 +1,6 @@
 package ru.ellaid.app.network.auth.error
 
-enum class LoginError {
+enum class LoginStatus {
     OK,
     CALL_FAILURE,
     UNKNOWN_RESPONSE,

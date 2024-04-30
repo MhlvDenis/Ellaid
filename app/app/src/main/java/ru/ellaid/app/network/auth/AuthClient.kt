@@ -1,72 +1,82 @@
 package ru.ellaid.app.network.auth
 
-import android.util.Log
 import com.google.gson.Gson
-import okhttp3.*
+import okhttp3.Call
+import okhttp3.Callback
 import okhttp3.MediaType.Companion.toMediaTypeOrNull
+import okhttp3.OkHttpClient
+import okhttp3.Request
 import okhttp3.RequestBody.Companion.toRequestBody
-import ru.ellaid.app.network.auth.form.LoginPasswordForm
+import okhttp3.Response
 import ru.ellaid.app.network.CredentialsHolder
-import ru.ellaid.app.network.auth.error.LoginError
-import ru.ellaid.app.network.auth.error.RegisterError
+import ru.ellaid.app.network.auth.error.LoginStatus
+import ru.ellaid.app.network.auth.error.RegisterStatus
+import ru.ellaid.app.network.auth.form.LoginPasswordForm
 import ru.ellaid.app.other.Constants
 import java.io.IOException
 import java.net.HttpURLConnection
 import javax.inject.Inject
 
-
 class AuthClient @Inject constructor(
     private val client: OkHttpClient,
 ) {
 
-    fun login(username: String, password: String, callback: (LoginError) -> Unit) {
-        val jsonString = Gson().toJson(LoginPasswordForm(username, password))
-        Log.println(Log.INFO, "login", jsonString)
-        val body = jsonString.toRequestBody("application/json".toMediaTypeOrNull())
-        val request = Request.Builder().url(Constants.BASE_URL + "auth/login").post(body).build()
-        var loginError = LoginError.OK
+    companion object {
+        private const val SIGN_IN_PATH = "/auth/sign-in"
+        private const val SIGN_UP_PATH = "/auth/sign-up"
+    }
+
+    fun login(
+        username: String,
+        password: String,
+        callback: (LoginStatus) -> Unit
+    ) {
+        val request = Request.Builder()
+            .url(Constants.BASE_URL + SIGN_IN_PATH)
+            .post(Gson().toJson(LoginPasswordForm(username, password))
+                .toRequestBody("application/json".toMediaTypeOrNull()))
+            .build()
+
         client.newCall(request).enqueue(object : Callback {
             override fun onFailure(call: Call, e: IOException) {
-                loginError = LoginError.CALL_FAILURE
-                callback.invoke(loginError)
+                callback(LoginStatus.CALL_FAILURE)
             }
 
             override fun onResponse(call: Call, response: Response) {
                 when (response.code) {
                     HttpURLConnection.HTTP_OK -> {
                         CredentialsHolder.token = response.body!!.string()
+                        callback(LoginStatus.OK)
                     }
-                    HttpURLConnection.HTTP_UNAUTHORIZED -> {
-                        loginError = LoginError.INCORRECT_DATA
-                    }
-                    else -> {
-                        loginError = LoginError.UNKNOWN_RESPONSE
-                    }
+                    HttpURLConnection.HTTP_UNAUTHORIZED -> callback(LoginStatus.INCORRECT_DATA)
+                    else -> callback(LoginStatus.UNKNOWN_RESPONSE)
                 }
-                callback.invoke(loginError)
             }
         })
     }
 
-    fun register(username: String, password: String, callback: (RegisterError) -> Unit) {
-        val jsonString = Gson().toJson(LoginPasswordForm(username, password))
-        Log.println(Log.INFO, "register", jsonString)
-        val body = jsonString.toRequestBody("application/json".toMediaTypeOrNull())
-        val request = Request.Builder().url(Constants.BASE_URL + "auth/register").post(body).build()
-        var registerError = RegisterError.OK
+    fun register(
+        username: String,
+        password: String,
+        callback: (RegisterStatus) -> Unit
+    ) {
+        val request = Request.Builder()
+            .url(Constants.BASE_URL + SIGN_UP_PATH)
+            .post(Gson().toJson(LoginPasswordForm(username, password))
+                .toRequestBody("application/json".toMediaTypeOrNull()))
+            .build()
+
         client.newCall(request).enqueue(object : Callback {
             override fun onFailure(call: Call, e: IOException) {
-                registerError = RegisterError.CALL_FAILURE
-                callback.invoke(registerError)
+                callback(RegisterStatus.CALL_FAILURE)
             }
 
             override fun onResponse(call: Call, response: Response) {
-                if (response.code == HttpURLConnection.HTTP_BAD_REQUEST) {
-                    registerError = RegisterError.USER_ALREADY_EXISTS
-                } else if (response.code != HttpURLConnection.HTTP_CREATED) {
-                    registerError = RegisterError.UNKNOWN_RESPONSE
+                when (response.code) {
+                    HttpURLConnection.HTTP_CREATED -> callback(RegisterStatus.OK)
+                    HttpURLConnection.HTTP_CONFLICT -> callback(RegisterStatus.USER_ALREADY_EXISTS)
+                    else -> callback(RegisterStatus.UNKNOWN_RESPONSE)
                 }
-                callback.invoke(registerError)
             }
         })
     }

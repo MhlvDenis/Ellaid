@@ -1,6 +1,6 @@
 package ru.ellaid.app.network.auth.error
 
-enum class RegisterError {
+enum class RegisterStatus {
     OK,
     CALL_FAILURE,
     UNKNOWN_RESPONSE,

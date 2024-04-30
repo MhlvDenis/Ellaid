@@ -4,11 +4,9 @@ object Constants {
 
     const val HOST = "10.0.2.2"
 
-    const val PORT = 8080
-
     const val SCHEME = "http"
 
-    const val BASE_URL = "$SCHEME://$HOST:$PORT/elysium/"
+    const val BASE_URL = "$SCHEME://$HOST"
 
     const val MEDIA_ROOT_ID = "root_id"
 

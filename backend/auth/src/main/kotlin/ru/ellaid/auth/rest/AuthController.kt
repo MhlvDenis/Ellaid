@@ -42,7 +42,7 @@ class AuthController(
             HttpStatus.OK
         )
     } catch (e: AuthenticationFailedException) {
-        ResponseEntity(HttpStatus.FORBIDDEN)
+        ResponseEntity(HttpStatus.UNAUTHORIZED)
     }
 
     @GetMapping("/validate")

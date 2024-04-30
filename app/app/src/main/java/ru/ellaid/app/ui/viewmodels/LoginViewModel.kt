@@ -6,7 +6,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import ru.ellaid.app.network.auth.AuthClient
-import ru.ellaid.app.network.auth.error.LoginError
+import ru.ellaid.app.network.auth.error.LoginStatus
 import javax.inject.Inject
 
 data class LoggedInUserView(
@@ -41,25 +41,25 @@ class LoginViewModel @Inject constructor(
     fun login(username: String, password: String) {
         authClient.login(username, password) { result ->
             when (result) {
-                LoginError.OK -> {
+                LoginStatus.OK -> {
                     _loginResult.postValue(
                         LoginResult(success = LoggedInUserView(message = "Welcome, $username"))
                     )
                     Log.println(Log.INFO, "login", "logged in")
                 }
-                LoginError.INCORRECT_DATA -> {
+                LoginStatus.INCORRECT_DATA -> {
                     _loginResult.postValue(
                         LoginResult(error = LoginErrorOccurred(message = "Wrong login or password"))
                     )
                     Log.println(Log.INFO, "login", "Wrong login or password")
                 }
-                LoginError.CALL_FAILURE -> {
+                LoginStatus.CALL_FAILURE -> {
                     _loginResult.postValue(
                         LoginResult(error = LoginErrorOccurred(message = "Something's wrong with network"))
                     )
                     Log.println(Log.INFO, "login", "Something's wrong with network")
                 }
-                LoginError.UNKNOWN_RESPONSE -> {
+                LoginStatus.UNKNOWN_RESPONSE -> {
                     Log.println(Log.ERROR, "login", "Unknown response")
                 }
             }

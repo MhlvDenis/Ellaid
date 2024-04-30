@@ -6,7 +6,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import ru.ellaid.app.network.auth.AuthClient
-import ru.ellaid.app.network.auth.error.RegisterError
+import ru.ellaid.app.network.auth.error.RegisterStatus
 import javax.inject.Inject
 
 data class RegisteredUser(
@@ -40,25 +40,25 @@ class RegistrationViewModel @Inject constructor(
     fun register(username: String, password: String) {
         authClient.register(username, password) { result ->
             when (result) {
-                RegisterError.OK -> {
+                RegisterStatus.OK -> {
                     _registrationResult.postValue(
                         RegistrationResult(success = RegisteredUser(message = "$username is successfully registered"))
                     )
                     Log.println(Log.INFO, "login", "$username registration successful")
                 }
-                RegisterError.USER_ALREADY_EXISTS -> {
+                RegisterStatus.USER_ALREADY_EXISTS -> {
                     _registrationResult.postValue(
                         RegistrationResult(error = RegistrationErrorOccurred(message = "$username is already registered"))
                     )
                     Log.println(Log.INFO, "login", "$username already exists")
                 }
-                RegisterError.CALL_FAILURE -> {
+                RegisterStatus.CALL_FAILURE -> {
                     _registrationResult.postValue(
                         RegistrationResult(error = RegistrationErrorOccurred(message = "Something's wrong with network"))
                     )
                     Log.println(Log.INFO, "login", "Something's wrong with network")
                 }
-                RegisterError.UNKNOWN_RESPONSE -> {
+                RegisterStatus.UNKNOWN_RESPONSE -> {
                     Log.println(Log.ERROR, "register", "Unknown response")
                 }
             }

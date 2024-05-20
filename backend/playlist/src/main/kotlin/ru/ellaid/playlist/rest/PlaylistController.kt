@@ -19,7 +19,7 @@ class PlaylistController(
 
     @GetMapping("/playlist")
     fun getPlaylist(
-        @RequestParam id: String
+        @RequestParam("id") id: String
     ): ResponseEntity<Playlist> = try {
         ResponseEntity(playlistService.getPlaylist(id), HttpStatus.OK)
     } catch (e: PlaylistNotFoundException) {
@@ -28,7 +28,7 @@ class PlaylistController(
 
     @GetMapping("/playlists")
     fun getPlaylists(
-        @RequestParam userId: String
+        @RequestParam("userId") userId: String
     ): ResponseEntity<List<Playlist>> =
         ResponseEntity(playlistService.getPlaylists(userId), HttpStatus.OK)
 
@@ -49,7 +49,7 @@ class PlaylistController(
 
     @DeleteMapping("/playlist")
     fun deletePlaylist(
-        @RequestParam id: String
+        @RequestParam("id") id: String
     ): ResponseEntity<Playlist> = try {
         ResponseEntity(playlistService.deletePlaylist(id), HttpStatus.OK)
     } catch (e: PlaylistNotFoundException) {

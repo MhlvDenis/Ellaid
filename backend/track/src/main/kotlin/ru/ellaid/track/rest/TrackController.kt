@@ -11,22 +11,22 @@ import ru.ellaid.track.service.SearchService
 import ru.ellaid.track.service.TrackService
 
 @RestController
-@RequestMapping("/track")
+@RequestMapping
 class TrackController(
     private val trackService: TrackService,
     private val searchService: SearchService,
 ) {
 
-    @GetMapping
+    @GetMapping("/track")
     fun getTrack(
-        @RequestParam id: String
+        @RequestParam("id") id: String
     ): ResponseEntity<Track> = try {
         ResponseEntity(searchService.getTrack(id), HttpStatus.OK)
     } catch (e: TrackNotFoundException) {
         ResponseEntity(HttpStatus.NOT_FOUND)
     }
 
-    @PostMapping
+    @PostMapping("/track")
     fun postTrack(
         @RequestBody createTrackForm: CreateTrackForm
     ): ResponseEntity<Track> = try {
@@ -42,4 +42,13 @@ class TrackController(
     } catch (e: DuplicateTrackUrlException) {
         ResponseEntity(HttpStatus.CONFLICT)
     }
+
+    @PostMapping("/tracks")
+    fun getTracks(
+        @RequestBody trackIds: List<String>,
+    ): ResponseEntity<List<Track>> =
+        ResponseEntity(
+            searchService.getTracks(trackIds),
+            HttpStatus.OK
+        )
 }

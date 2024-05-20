@@ -28,7 +28,7 @@ class CommentClient @Inject constructor(
 
     companion object {
         private const val ADD_COMMENT_PATH = "/comment"
-        private const val FETCH_COMMENTS_PATH = "/comments"
+        private const val FETCH_COMMENTS_PATH_SEGMENT = "comments"
     }
 
     private val commentCache: CommentCache = CommentCache()
@@ -47,7 +47,7 @@ class CommentClient @Inject constructor(
             val url = HttpUrl.Builder()
                 .scheme(Constants.SCHEME)
                 .host(Constants.HOST)
-                .addPathSegment(FETCH_COMMENTS_PATH)
+                .addPathSegment(FETCH_COMMENTS_PATH_SEGMENT)
                 .addQueryParameter("trackId", trackId)
                 .build()
 
@@ -71,7 +71,8 @@ class CommentClient @Inject constructor(
                         }
                         else -> {
                             Log.println(
-                                Log.ERROR, "CommentClient",
+                                Log.WARN,
+                                "CommentClient",
                                 "Unknown response from /comments: $response"
                             )
                             callback(emptyList())

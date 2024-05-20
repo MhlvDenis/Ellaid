@@ -20,6 +20,12 @@ class SearchService(
             logger.error { "Not found track by id $id" }
         }
 
+    fun getTracks(trackIds: List<String>): List<Track> =
+        trackIds.asSequence()
+            .map { metadataManager.metadata[it] }
+            .filterNotNull()
+            .toList()
+
     fun searchByPattern(pattern: String): List<Track> =
         searchAlgorithm.perform(metadataManager.metadata.values.toList(), pattern)
 }

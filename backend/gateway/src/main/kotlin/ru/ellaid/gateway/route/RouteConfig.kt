@@ -67,6 +67,11 @@ open class RouteConfig {
                     .method(HttpMethod.GET)
                     .uri("lb://track")
             }
+            .route("fetch_tracks_route") { route ->
+                route.path("/tracks").and()
+                    .method(HttpMethod.POST)
+                    .uri("lb://track")
+            }
             .route("search_route") { route ->
                 route.path("/search").and()
                     .method(HttpMethod.GET)

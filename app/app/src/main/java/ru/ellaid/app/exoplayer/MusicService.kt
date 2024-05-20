@@ -20,7 +20,6 @@ import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.*
 import ru.ellaid.app.common.Constants.MEDIA_ROOT_ID
 import ru.ellaid.app.common.Constants.NETWORK_ERROR
-import ru.ellaid.app.data.entity.Track
 import ru.ellaid.app.exoplayer.callbacks.MusicPlaybackPreparer
 import ru.ellaid.app.exoplayer.callbacks.MusicPlayerEventListener
 import ru.ellaid.app.exoplayer.callbacks.MusicPlayerNotificationListener
@@ -61,9 +60,6 @@ class MusicService : MediaBrowserServiceCompat() {
     companion object {
         var curSongDuration = 0L
             private set
-
-        lateinit var requestSearch: (String, (List<Track>) -> Unit) -> Unit
-            private set
     }
 
     @RequiresApi(Build.VERSION_CODES.S)
@@ -96,7 +92,7 @@ class MusicService : MediaBrowserServiceCompat() {
         val musicPlaybackPreparer = MusicPlaybackPreparer(musicSource) {
             curPlayingSong = it
             preparePlayer(
-                musicSource.songs,
+                musicSource.tracks,
                 it,
                 true
             )
@@ -114,24 +110,18 @@ class MusicService : MediaBrowserServiceCompat() {
         isReadyToPreparePlayer.observeForever { isReady ->
             if (isReady) {
                 preparePlayer(
-                    musicSource.songs,
-                    musicSource.songs[0],
+                    musicSource.tracks,
+                    musicSource.tracks[0],
                     false
                 )
                 isPlayerInitialized = true
-            }
-        }
-
-        requestSearch = { request, applySongs ->
-            serviceScope.launch {
-                musicSource.provideSearch(request, applySongs)
             }
         }
     }
 
     private inner class MusicQueueNavigator : TimelineQueueNavigator(mediaSession) {
         override fun getMediaDescription(player: Player, windowIndex: Int): MediaDescriptionCompat {
-            return musicSource.songs[windowIndex].description
+            return musicSource.tracks[windowIndex].description
         }
     }
 
@@ -176,7 +166,7 @@ class MusicService : MediaBrowserServiceCompat() {
                 val resultsSent = musicSource.whenReady { isInitialized ->
                     if (isInitialized) {
                         result.sendResult(musicSource.asMediaItems())
-                        if (!isPlayerInitialized && musicSource.songs.isNotEmpty()) {
+                        if (!isPlayerInitialized && musicSource.tracks.isNotEmpty()) {
                             isReadyToPreparePlayer.postValue(true)
                         }
                     } else {

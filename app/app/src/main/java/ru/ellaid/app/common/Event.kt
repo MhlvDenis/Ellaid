@@ -3,8 +3,7 @@ package ru.ellaid.app.common
 open class Event<out T>(
     private val data: T
 ) {
-    var hasBeenHandled = false
-        private set
+    private var hasBeenHandled = false
 
     fun getContentIfNotHandled(): T? {
         return if (hasBeenHandled) {

@@ -19,10 +19,6 @@ import com.google.android.exoplayer2.MediaItem
 import com.google.android.exoplayer2.source.ConcatenatingMediaSource
 import com.google.android.exoplayer2.source.ProgressiveMediaSource
 import com.google.android.exoplayer2.upstream.DefaultDataSource
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.withContext
-import ru.ellaid.app.common.Constants.TYPOS_IN_SEARCH
-import ru.ellaid.app.data.entity.Track
 import ru.ellaid.app.exoplayer.State.STATE_CREATED
 import ru.ellaid.app.exoplayer.State.STATE_ERROR
 import ru.ellaid.app.exoplayer.State.STATE_INITIALIZED
@@ -33,35 +29,34 @@ import javax.inject.Inject
 class MusicSource @Inject constructor(
     private val trackClient: TrackClient,
 ) {
-    var songs = emptyList<MediaMetadataCompat>()
+    var tracks = emptyList<MediaMetadataCompat>()
 
-    suspend fun fetchMediaData() = withContext(Dispatchers.IO) {
+    fun fetchMediaData(
+        trackIds: List<String>,
+    ) {
         state = STATE_INITIALIZING
-        val allSongs = trackClient.getAllSongs()
-        songs = allSongs.map { song ->
-            Builder()
-                .putString(METADATA_KEY_ARTIST, song.author)
-                .putString(METADATA_KEY_MEDIA_ID, song.id)
-                .putString(METADATA_KEY_TITLE, song.name)
-                .putString(METADATA_KEY_DISPLAY_TITLE, song.name)
-                .putString(METADATA_KEY_DISPLAY_ICON_URI, song.coverUrl)
-                .putString(METADATA_KEY_MEDIA_URI, song.musicUrl)
-                .putString(METADATA_KEY_ALBUM_ART_URI, song.coverUrl)
-                .putString(METADATA_KEY_DISPLAY_SUBTITLE, song.author)
-                .putString(METADATA_KEY_DISPLAY_DESCRIPTION, song.author)
-                .build()
-        }
-        state = STATE_INITIALIZED
-    }
+        trackClient.fetchTracks(trackIds) { tracksMetadata ->
+            tracks = tracksMetadata.map { track ->
+                Builder()
+                    .putString(METADATA_KEY_ARTIST, track.author)
+                    .putString(METADATA_KEY_MEDIA_ID, track.id)
+                    .putString(METADATA_KEY_TITLE, track.name)
+                    .putString(METADATA_KEY_DISPLAY_TITLE, track.name)
+                    .putString(METADATA_KEY_DISPLAY_ICON_URI, track.coverUrl)
+                    .putString(METADATA_KEY_MEDIA_URI, track.musicUrl)
+                    .putString(METADATA_KEY_ALBUM_ART_URI, track.coverUrl)
+                    .putString(METADATA_KEY_DISPLAY_SUBTITLE, track.author)
+                    .putString(METADATA_KEY_DISPLAY_DESCRIPTION, track.author)
+                    .build()
+            }
 
-    suspend fun provideSearch(request: String, applySongs: (List<Track>) -> Unit) {
-        val foundSongs = trackClient.searchWithTypos(request, TYPOS_IN_SEARCH)
-        applySongs(foundSongs)
+            state = STATE_INITIALIZED
+        }
     }
 
     fun asMediaSource(dataSourceFactory: DefaultDataSource.Factory): ConcatenatingMediaSource {
         val concatenatingMediaSource = ConcatenatingMediaSource()
-        songs.forEach { song ->
+        tracks.forEach { song ->
             val mediaSource = ProgressiveMediaSource.Factory(dataSourceFactory)
                 .createMediaSource(MediaItem.fromUri(song.getString(METADATA_KEY_MEDIA_URI)))
             concatenatingMediaSource.addMediaSource(mediaSource)
@@ -69,7 +64,7 @@ class MusicSource @Inject constructor(
         return concatenatingMediaSource
     }
 
-    fun asMediaItems() = songs.map { song ->
+    fun asMediaItems() = tracks.map { song ->
         val desc = MediaDescriptionCompat.Builder()
             .setMediaUri(song.getString(METADATA_KEY_MEDIA_URI).toUri())
             .setTitle(song.description.title)

@@ -3,6 +3,7 @@ package ru.ellaid.auth.service
 import org.springframework.security.core.userdetails.UserDetails
 import org.springframework.security.core.userdetails.UserDetailsService
 import org.springframework.stereotype.Service
+import org.springframework.transaction.annotation.Transactional
 import ru.ellaid.auth.data.entity.Role
 import ru.ellaid.auth.data.entity.User
 import ru.ellaid.auth.data.repository.UserRepository
@@ -10,7 +11,8 @@ import ru.ellaid.auth.exception.DuplicateUserLoginException
 import ru.ellaid.auth.exception.UserNotFoundException
 
 @Service
-class UserService(
+@Transactional
+open class UserService(
     private val repository: UserRepository
 ): UserDetailsService {
 

@@ -2,6 +2,7 @@ package ru.ellaid.playlist.service
 
 import io.github.oshai.kotlinlogging.KotlinLogging
 import org.springframework.stereotype.Service
+import org.springframework.transaction.annotation.Transactional
 import ru.ellaid.playlist.data.entity.Playlist
 import ru.ellaid.playlist.data.repository.PlaylistRepository
 import ru.ellaid.playlist.exception.DuplicatePlaylistException
@@ -12,7 +13,8 @@ import ru.ellaid.playlist.exception.TrackNotFoundException
 private val logger = KotlinLogging.logger { }
 
 @Service
-class PlaylistService(
+@Transactional
+open class PlaylistService(
     private val repository: PlaylistRepository
 ) {
 

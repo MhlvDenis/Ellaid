@@ -5,12 +5,14 @@ import jakarta.annotation.PostConstruct
 import org.springframework.scheduling.annotation.EnableScheduling
 import org.springframework.scheduling.annotation.Scheduled
 import org.springframework.stereotype.Component
+import org.springframework.transaction.annotation.Transactional
 import ru.ellaid.track.data.entity.Track
 import ru.ellaid.track.data.repository.TrackRepository
 
 private val logger = KotlinLogging.logger { }
 
 @Component
+@Transactional
 @EnableScheduling
 open class TrackMetadataManager(
     private val repository: TrackRepository

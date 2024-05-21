@@ -2,6 +2,7 @@ package ru.ellaid.comment.service
 
 import io.github.oshai.kotlinlogging.KotlinLogging
 import org.springframework.stereotype.Service
+import org.springframework.transaction.annotation.Transactional
 import ru.ellaid.comment.data.entity.Comment
 import ru.ellaid.comment.data.repository.CommentRepository
 import ru.ellaid.comment.exception.CommentNotFoundException
@@ -9,7 +10,8 @@ import ru.ellaid.comment.exception.CommentNotFoundException
 private val logger = KotlinLogging.logger { }
 
 @Service
-class CommentService(
+@Transactional
+open class CommentService(
     private val repository: CommentRepository
 ) {
 

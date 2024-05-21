@@ -2,6 +2,7 @@ package ru.ellaid.track.service
 
 import io.github.oshai.kotlinlogging.KotlinLogging
 import org.springframework.stereotype.Service
+import org.springframework.transaction.annotation.Transactional
 import ru.ellaid.track.data.entity.Track
 import ru.ellaid.track.data.repository.TrackRepository
 import ru.ellaid.track.exception.DuplicateTrackUrlException
@@ -9,7 +10,8 @@ import ru.ellaid.track.exception.DuplicateTrackUrlException
 private val logger = KotlinLogging.logger { }
 
 @Service
-class TrackService(
+@Transactional
+open class TrackService(
     private val repository: TrackRepository
 ) {
 

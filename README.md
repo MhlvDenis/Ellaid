@@ -10,6 +10,7 @@
 
 ### Run backend locally
 ```shell
+cd backend
 cp .env.example .env
 python3 run.py build image run all -d
 ```

@@ -2,6 +2,7 @@ package ru.ellaid.gateway.filter
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties
 import io.github.oshai.kotlinlogging.KotlinLogging
+import org.springframework.beans.factory.annotation.Value
 import org.springframework.cloud.client.loadbalancer.reactive.ReactorLoadBalancerExchangeFilterFunction
 import org.springframework.cloud.gateway.filter.GatewayFilter
 import org.springframework.cloud.gateway.filter.factory.AbstractGatewayFilterFactory
@@ -16,18 +17,18 @@ private val logger = KotlinLogging.logger { }
 
 @Component
 class TokenValidationFilterFactory(
+    @Value("\${app.auth.host}") authHost: String,
     loadBalancer: ReactorLoadBalancerExchangeFilterFunction,
 ) : AbstractGatewayFilterFactory<TokenValidationFilterFactory.Config>() {
 
     companion object {
-        private const val DOMAIN = "http://auth"
         private const val VALIDATION_ENDPOINT = "/auth/validate"
         private const val TOKEN_PARAM = "token"
     }
 
     private val client = WebClient.builder()
         .filter(loadBalancer)
-        .baseUrl(DOMAIN)
+        .baseUrl(authHost)
         .build()
 
     override fun apply(

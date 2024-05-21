@@ -2,7 +2,14 @@ server.port: 8080
 
 spring.application.name: gateway
 
+app:
+  auth:
+    host: ${AUTH_HOST}
+
+  storage:
+    url: ${MINIO_URL}
+
 eureka:
   client:
     service-url:
-      defaultZone: http://eureka:8761/eureka
+      defaultZone: ${EUREKA_URL}

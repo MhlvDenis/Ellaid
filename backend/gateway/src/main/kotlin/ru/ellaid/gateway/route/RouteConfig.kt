@@ -1,5 +1,6 @@
 package ru.ellaid.gateway.route
 
+import org.springframework.beans.factory.annotation.Value
 import org.springframework.cloud.gateway.filter.GatewayFilter
 import org.springframework.cloud.gateway.route.RouteLocator
 import org.springframework.cloud.gateway.route.builder.RouteLocatorBuilder
@@ -9,7 +10,10 @@ import org.springframework.http.HttpMethod
 import ru.ellaid.gateway.filter.TokenValidationFilterFactory
 
 @Configuration
-open class RouteConfig {
+open class RouteConfig(
+    @Value("\${app.storage.url}")
+    private val storageUrl: String,
+) {
 
     @Bean
     open fun ellaidRoute(
@@ -83,7 +87,7 @@ open class RouteConfig {
                 route.path("/storage-api/download/**").and()
                     .method(HttpMethod.GET)
                     .filters { it.stripPrefix(2) }
-                    .uri("http://minio:9000")
+                    .uri(storageUrl)
             }
             .build()
     }

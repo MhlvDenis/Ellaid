@@ -3,28 +3,24 @@ version: "3.7"
 services:
 
   gateway:
+    image: denchkm/ellaid-gateway
     container_name: gateway
-    build: gateway
     networks:
       - ellaid-net
     ports:
       - "80:8080"
-    environment:
-      EUREKA_URL: ${EUREKA_URL}
-      MINIO_URL: ${MINIO_URL}
-      AUTH_HOST: ${AUTH_HOST}
 
   eureka:
+    image: denchkm/ellaid-eureka
     container_name: eureka
-    build: eureka
     networks:
       - ellaid-net
     ports:
       - "8761:8761"
 
   auth:
+    image: denchkm/ellaid-auth
     container_name: auth
-    build: auth
     networks:
       - ellaid-net
     ports:
@@ -37,11 +33,10 @@ services:
       JWT_EXPIRATION_TIME_MS: ${JWT_EXPIRATION_TIME_MS}
       ADMIN_USERNAME: ${ADMIN_USERNAME}
       ADMIN_PASSWORD: ${ADMIN_PASSWORD}
-      EUREKA_URL: ${EUREKA_URL}
 
   comment:
+    image: denchkm/ellaid-comment
     container_name: comment
-    build: comment
     networks:
       - ellaid-net
     ports:
@@ -52,11 +47,10 @@ services:
       JWT_SECRET_KEY: ${JWT_SECRET_KEY}
       JWT_ISSUER: ${JWT_ISSUER}
       JWT_EXPIRATION_TIME_MS: ${JWT_EXPIRATION_TIME_MS}
-      EUREKA_URL: ${EUREKA_URL}
 
   playlist:
+    image: denchkm/ellaid-playlist
     container_name: playlist
-    build: playlist
     networks:
       - ellaid-net
     ports:
@@ -67,11 +61,10 @@ services:
       JWT_SECRET_KEY: ${JWT_SECRET_KEY}
       JWT_ISSUER: ${JWT_ISSUER}
       JWT_EXPIRATION_TIME_MS: ${JWT_EXPIRATION_TIME_MS}
-      EUREKA_URL: ${EUREKA_URL}
 
   track:
+    image: denchkm/ellaid-track
     container_name: track
-    build: track
     networks:
       - ellaid-net
     ports:
@@ -82,11 +75,10 @@ services:
       JWT_SECRET_KEY: ${JWT_SECRET_KEY}
       JWT_ISSUER: ${JWT_ISSUER}
       JWT_EXPIRATION_TIME_MS: ${JWT_EXPIRATION_TIME_MS}
-      EUREKA_URL: ${EUREKA_URL}
 
   storage:
+    image: denchkm/ellaid-storage
     container_name: storage
-    build: storage
     networks:
       - ellaid-net
     ports:
@@ -102,35 +94,42 @@ services:
       JWT_SECRET_KEY: ${JWT_SECRET_KEY}
       JWT_ISSUER: ${JWT_ISSUER}
       JWT_EXPIRATION_TIME_MS: ${JWT_EXPIRATION_TIME_MS}
-      EUREKA_URL: ${EUREKA_URL}
 
   auth-mongodb:
-    container_name: auth-mongodb
     image: mongo:latest
+    container_name: auth-mongodb
+    expose:
+      - 27017
     networks:
       - ellaid-net
     volumes:
       - auth_data:/data/db
 
   comment-mongodb:
-    container_name: comment-mongodb
     image: mongo:latest
+    container_name: comment-mongodb
+    expose:
+      - 27017
     networks:
       - ellaid-net
     volumes:
       - comment_data:/data/db
 
   playlist-mongodb:
-    container_name: playlist-mongodb
     image: mongo:latest
+    container_name: playlist-mongodb
+    expose:
+      - 27017
     networks:
       - ellaid-net
     volumes:
       - playlist_data:/data/db
 
   track-mongodb:
-    container_name: track-mongodb
     image: mongo:latest
+    container_name: track-mongodb
+    expose:
+      - 27017
     networks:
       - ellaid-net
     volumes:

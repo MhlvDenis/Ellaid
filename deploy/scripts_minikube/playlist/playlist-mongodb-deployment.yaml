@@ -1,0 +1,32 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: playlist-mongodb
+  labels:
+    tier: playlist-mongodb
+    app: ellaid
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      tier: playlist-mongodb
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        tier: playlist-mongodb
+    spec:
+      containers:
+        - name: playlist-mongodb
+          image: mongo
+          ports:
+            - containerPort: 27017
+              protocol: TCP
+          volumeMounts:
+            - mountPath: "/data/db"
+              name: playlist-data
+      volumes:
+        - name: playlist-data
+          persistentVolumeClaim:
+            claimName: playlist-data

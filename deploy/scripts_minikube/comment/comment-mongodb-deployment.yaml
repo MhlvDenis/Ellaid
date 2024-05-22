@@ -1,0 +1,32 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: comment-mongodb
+  labels:
+    tier: comment-mongodb
+    app: ellaid
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      tier: comment-mongodb
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        tier: comment-mongodb
+    spec:
+      containers:
+        - name: comment-mongodb
+          image: mongo
+          ports:
+            - containerPort: 27017
+              protocol: TCP
+          volumeMounts:
+            - mountPath: "/data/db"
+              name: comment-data
+      volumes:
+        - name: comment-data
+          persistentVolumeClaim:
+            claimName: comment-data

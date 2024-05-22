@@ -1,0 +1,10 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: comment-config
+data:
+  JWT_SECRET_KEY: "aahhahhahahahahpaphaphaphapahpahphahpahahahaahahhaahahaha"
+  JWT_ISSUER: "me"
+  JWT_EXPIRATION_TIME_MS: "100000000000"
+
+  EUREKA_URL: "http://eureka:8761/eureka"

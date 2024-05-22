@@ -1,0 +1,32 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: auth-mongodb
+  labels:
+    tier: auth-mongodb
+    app: ellaid
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      tier: auth-mongodb
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        tier: auth-mongodb
+    spec:
+      containers:
+        - name: auth-mongodb
+          image: mongo
+          ports:
+            - containerPort: 27017
+              protocol: TCP
+          volumeMounts:
+            - mountPath: "/data/db"
+              name: auth-data
+      volumes:
+        - name: auth-data
+          persistentVolumeClaim:
+            claimName: auth-data

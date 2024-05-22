@@ -1,0 +1,53 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: minio
+  labels:
+    tier: minio
+    app: ellaid
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      tier: minio
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        tier: minio
+    spec:
+      containers:
+        - image: minio/minio:latest
+          name: minio
+          args:
+            - server
+            - --console-address
+            - :9001
+            - /data
+          envFrom:
+            - configMapRef:
+                name: minio-config
+          livenessProbe:
+            exec:
+              command:
+                - curl
+                - -f
+                - http://localhost:9000/minio/health/live
+            failureThreshold: 3
+            periodSeconds: 30
+            timeoutSeconds: 20
+          ports:
+            - containerPort: 9000
+              hostPort: 9000
+              protocol: TCP
+            - containerPort: 9001
+              hostPort: 9001
+              protocol: TCP
+          volumeMounts:
+            - mountPath: "/data"
+              name: minio-data
+      volumes:
+        - name: minio-data
+          persistentVolumeClaim:
+            claimName: minio-data

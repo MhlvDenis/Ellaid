@@ -9,6 +9,10 @@ services:
       - ellaid-net
     ports:
       - "80:8080"
+    environment:
+      EUREKA_URL: ${EUREKA_URL}
+      MINIO_URL: ${MINIO_URL}
+      AUTH_HOST: ${AUTH_HOST}
 
   eureka:
     image: denchkm/ellaid-eureka
@@ -33,6 +37,7 @@ services:
       JWT_EXPIRATION_TIME_MS: ${JWT_EXPIRATION_TIME_MS}
       ADMIN_USERNAME: ${ADMIN_USERNAME}
       ADMIN_PASSWORD: ${ADMIN_PASSWORD}
+      EUREKA_URL: ${EUREKA_URL}
 
   comment:
     image: denchkm/ellaid-comment
@@ -47,6 +52,7 @@ services:
       JWT_SECRET_KEY: ${JWT_SECRET_KEY}
       JWT_ISSUER: ${JWT_ISSUER}
       JWT_EXPIRATION_TIME_MS: ${JWT_EXPIRATION_TIME_MS}
+      EUREKA_URL: ${EUREKA_URL}
 
   playlist:
     image: denchkm/ellaid-playlist
@@ -61,6 +67,7 @@ services:
       JWT_SECRET_KEY: ${JWT_SECRET_KEY}
       JWT_ISSUER: ${JWT_ISSUER}
       JWT_EXPIRATION_TIME_MS: ${JWT_EXPIRATION_TIME_MS}
+      EUREKA_URL: ${EUREKA_URL}
 
   track:
     image: denchkm/ellaid-track
@@ -75,6 +82,7 @@ services:
       JWT_SECRET_KEY: ${JWT_SECRET_KEY}
       JWT_ISSUER: ${JWT_ISSUER}
       JWT_EXPIRATION_TIME_MS: ${JWT_EXPIRATION_TIME_MS}
+      EUREKA_URL: ${EUREKA_URL}
 
   storage:
     image: denchkm/ellaid-storage
@@ -94,6 +102,7 @@ services:
       JWT_SECRET_KEY: ${JWT_SECRET_KEY}
       JWT_ISSUER: ${JWT_ISSUER}
       JWT_EXPIRATION_TIME_MS: ${JWT_EXPIRATION_TIME_MS}
+      EUREKA_URL: ${EUREKA_URL}
 
   auth-mongodb:
     image: mongo:latest

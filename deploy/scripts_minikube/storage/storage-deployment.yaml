@@ -1,0 +1,38 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: storage
+  labels:
+    tier: storage
+    app: ellaid
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      tier: storage
+  strategy:
+    rollingUpdate:
+      maxSurge: 25%
+      maxUnavailable: 25%
+    type: RollingUpdate
+  template:
+    metadata:
+      labels:
+        tier: storage
+    spec:
+      containers:
+        - name: storage
+          image: denchkm/ellaid-storage
+          envFrom:
+            - configMapRef:
+                name: storage-config
+          ports:
+            - containerPort: 8085
+              protocol: TCP
+          resources:
+            limits:
+              memory: "256Mi"
+              cpu: "200m"
+            requests:
+              memory: "128Mi"
+              cpu: "50m"

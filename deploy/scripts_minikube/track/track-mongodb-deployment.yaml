@@ -1,0 +1,32 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: track-mongodb
+  labels:
+    tier: track-mongodb
+    app: ellaid
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      tier: track-mongodb
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        tier: track-mongodb
+    spec:
+      containers:
+        - name: track-mongodb
+          image: mongo
+          ports:
+            - containerPort: 27017
+              protocol: TCP
+          volumeMounts:
+            - mountPath: "/data/db"
+              name: track-data
+      volumes:
+        - name: track-data
+          persistentVolumeClaim:
+            claimName: track-data

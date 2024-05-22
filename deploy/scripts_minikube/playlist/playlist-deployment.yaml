@@ -1,0 +1,38 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: playlist
+  labels:
+    tier: playlist
+    app: ellaid
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      tier: playlist
+  strategy:
+    rollingUpdate:
+      maxSurge: 25%
+      maxUnavailable: 25%
+    type: RollingUpdate
+  template:
+    metadata:
+      labels:
+        tier: playlist
+    spec:
+      containers:
+        - name: playlist
+          image: denchkm/ellaid-playlist
+          envFrom:
+            - configMapRef:
+                name: playlist-config
+          ports:
+            - containerPort: 8083
+              protocol: TCP
+          resources:
+            limits:
+              memory: "256Mi"
+              cpu: "200m"
+            requests:
+              memory: "128Mi"
+              cpu: "50m"

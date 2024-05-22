@@ -1,0 +1,17 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: storage-config
+data:
+  JWT_SECRET_KEY: "aahhahhahahahahpaphaphaphapahpahphahpahahahaahahhaahahaha"
+  JWT_ISSUER: "me"
+  JWT_EXPIRATION_TIME_MS: "100000000000"
+
+  EUREKA_URL: "http://eureka:8761/eureka"
+
+  HOST_URL: "http://localhost"
+
+  MINIO_BUCKET: "storage"
+  MINIO_URL: "http://minio:9000"
+  MINIO_ACCESS_KEY: "minioadmin"
+  MINIO_SECRET_KEY: "minioadmin"

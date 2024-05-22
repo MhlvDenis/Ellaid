@@ -1,0 +1,38 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: auth
+  labels:
+    tier: auth
+    app: ellaid
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      tier: auth
+  strategy:
+    rollingUpdate:
+      maxSurge: 25%
+      maxUnavailable: 25%
+    type: RollingUpdate
+  template:
+    metadata:
+      labels:
+        tier: auth
+    spec:
+      containers:
+        - name: auth
+          image: denchkm/ellaid-auth
+          envFrom:
+            - configMapRef:
+                name: auth-config
+          ports:
+            - containerPort: 8081
+              protocol: TCP
+          resources:
+            limits:
+              memory: "256Mi"
+              cpu: "200m"
+            requests:
+              memory: "128Mi"
+              cpu: "50m"

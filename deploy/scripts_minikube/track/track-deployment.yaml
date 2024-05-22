@@ -1,0 +1,38 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: track
+  labels:
+    tier: track
+    app: ellaid
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      tier: track
+  strategy:
+    rollingUpdate:
+      maxSurge: 25%
+      maxUnavailable: 25%
+    type: RollingUpdate
+  template:
+    metadata:
+      labels:
+        tier: track
+    spec:
+      containers:
+        - name: track
+          image: denchkm/ellaid-track
+          envFrom:
+            - configMapRef:
+                name: track-config
+          ports:
+            - containerPort: 8084
+              protocol: TCP
+          resources:
+            limits:
+              memory: "256Mi"
+              cpu: "200m"
+            requests:
+              memory: "128Mi"
+              cpu: "50m"

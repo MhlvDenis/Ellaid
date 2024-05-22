@@ -16,10 +16,10 @@ import reactor.core.publisher.Mono
 private val logger = KotlinLogging.logger { }
 
 @Component
-class TokenValidationFilterFactory(
-    @Value("\${app.auth.host}") authHost: String,
+class TokenValidationGatewayFilterFactory(
+    @Value("\${services.auth.host}") authHost: String,
     loadBalancer: ReactorLoadBalancerExchangeFilterFunction,
-) : AbstractGatewayFilterFactory<TokenValidationFilterFactory.Config>() {
+) : AbstractGatewayFilterFactory<TokenValidationGatewayFilterFactory.Config>() {
 
     companion object {
         private const val VALIDATION_ENDPOINT = "/auth/validate"

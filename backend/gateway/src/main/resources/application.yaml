@@ -1,15 +1,95 @@
 server.port: 8080
 
-spring.application.name: gateway
-
-app:
+services:
+  scheme: ${SERVICES_ACCESS_SCHEME}
   auth:
-    host: ${AUTH_HOST}
-
+    host: ${AUTH_SERVICE_HOST}
+  comment:
+    host: ${COMMENT_SERVICE_HOST}
+  playlist:
+    host: ${PLAYLIST_SERVICE_HOST}
+  track:
+    host: ${TRACK_SERVICE_HOST}
   storage:
-    url: ${MINIO_URL}
+    host: ${STORAGE_SERVICE_HOST}
+    s3:
+      url: ${MINIO_URL}
 
 eureka:
   client:
     service-url:
       defaultZone: ${EUREKA_URL}
+
+spring:
+  application.name: gateway
+
+  cloud.gateway.routes:
+    # Auth Service
+    - id: auth_route
+      uri: ${services.scheme}${services.auth.host}
+      predicates:
+        - Path=/auth/**
+    # Comment Service
+    - id: affect_comment_route
+      uri: ${services.scheme}${services.comment.host}
+      predicates:
+        - Method=POST,DELETE,PATCH
+        - Path=/comment/**
+      filters:
+        - TokenValidation
+    - id: fetch_comments_route
+      uri: ${services.scheme}${services.comment.host}
+      predicates:
+        - Method=GET
+        - Path=/comments
+    # Playlist Service
+    - id: affect_playlist_route
+      uri: ${services.scheme}${services.playlist.host}
+      predicates:
+        - Method=POST,DELETE,PATCH
+        - Path=/playlist/**
+      filters:
+        - TokenValidation
+    - id: fetch_playlist_route
+      uri: ${services.scheme}${services.playlist.host}
+      predicates:
+        - Method=GET
+        - Path=/playlist
+    - id: fetch_playlists_route
+      uri: ${services.scheme}${services.playlist.host}
+      predicates:
+        - Method=GET
+        - Path=/playlists
+    # Track Service
+    - id: affect_track_route
+      uri: ${services.scheme}${services.track.host}
+      predicates:
+        - Method=POST
+        - Path=/track
+      filters:
+        - TokenValidation
+    - id: fetch_track_route
+      uri: ${services.scheme}${services.track.host}
+      predicates:
+        - Method=GET
+        - Path=/track
+    - id: search_route
+      uri: ${services.scheme}${services.track.host}
+      predicates:
+        - Method=GET
+        - Path=/search
+    # Storage Service
+    - id: storage_upload_route
+      uri: ${services.scheme}${services.storage.host}
+      predicates:
+        - Method=POST
+        - Path=/storage-api/upload
+      filters:
+        - TokenValidation
+    - id: storage_download_route
+      uri: ${services.storage.s3.url}
+      predicates:
+        - Method=GET
+        - Path=/storage-api/download/**
+      filters:
+        - StripPrefix=2

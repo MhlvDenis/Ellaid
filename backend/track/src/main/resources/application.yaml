@@ -5,9 +5,7 @@ spring:
 
   data:
     mongodb:
-      host: track-mongodb
-      port: 27017
-      database: track-service-db
+      uri: mongodb://track-mongodb:27017/track-service-db
       auto-index-creation: true
 
 app:

@@ -5,9 +5,7 @@ spring:
 
   data:
     mongodb:
-      host: comment-mongodb
-      port: 27017
-      database: comment-service-db
+      uri: mongodb://comment-mongodb:27017/comment-service-db
       auto-index-creation: true
 
 app:

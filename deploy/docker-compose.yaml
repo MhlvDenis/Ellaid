@@ -1,0 +1,193 @@
+version: "3.7"
+
+services:
+
+  gateway:
+    image: denchkm/ellaid-gateway
+    restart: always
+    networks:
+      - ellaid-net
+    ports:
+      - "80:8080"
+
+  eureka:
+    image: denchkm/ellaid-eureka
+    restart: always
+    deploy:
+      mode: replicated
+      replicas: 2
+    expose:
+      - 8761
+    networks:
+      - ellaid-net
+
+  auth:
+    image: denchkm/ellaid-auth
+    restart: always
+    deploy:
+      mode: replicated
+      replicas: 3
+    networks:
+      - ellaid-net
+    expose:
+      - 8081
+    depends_on:
+      - auth-mongodb1
+      - auth-mongodb2
+    environment:
+      JWT_SECRET_KEY: ${JWT_SECRET_KEY}
+      JWT_ISSUER: ${JWT_ISSUER}
+      JWT_EXPIRATION_TIME_MS: ${JWT_EXPIRATION_TIME_MS}
+      ADMIN_USERNAME: ${ADMIN_USERNAME}
+      ADMIN_PASSWORD: ${ADMIN_PASSWORD}
+      SPRING_DATA_MONGODB_URI: mongodb://auth-mongodb1:27017,auth-mongodb2:27017/auth-service-db
+
+  comment:
+    image: denchkm/ellaid-comment
+    restart: always
+    deploy:
+      mode: replicated
+      replicas: 2
+    networks:
+      - ellaid-net
+    expose:
+      - 8082
+    depends_on:
+      - comment-mongodb
+    environment:
+      JWT_SECRET_KEY: ${JWT_SECRET_KEY}
+      JWT_ISSUER: ${JWT_ISSUER}
+      JWT_EXPIRATION_TIME_MS: ${JWT_EXPIRATION_TIME_MS}
+
+  playlist:
+    image: denchkm/ellaid-playlist
+    restart: always
+    deploy:
+      mode: replicated
+      replicas: 2
+    networks:
+      - ellaid-net
+    expose:
+      - 8083
+    depends_on:
+      - playlist-mongodb
+    environment:
+      JWT_SECRET_KEY: ${JWT_SECRET_KEY}
+      JWT_ISSUER: ${JWT_ISSUER}
+      JWT_EXPIRATION_TIME_MS: ${JWT_EXPIRATION_TIME_MS}
+
+  track:
+    image: denchkm/ellaid-track
+    restart: always
+    deploy:
+      mode: replicated
+      replicas: 4
+    networks:
+      - ellaid-net
+    expose:
+      - 8084
+    depends_on:
+      - track-mongodb
+    environment:
+      JWT_SECRET_KEY: ${JWT_SECRET_KEY}
+      JWT_ISSUER: ${JWT_ISSUER}
+      JWT_EXPIRATION_TIME_MS: ${JWT_EXPIRATION_TIME_MS}
+
+  storage:
+    image: denchkm/ellaid-storage
+    restart: always
+    networks:
+      - ellaid-net
+    expose:
+      - 8085
+    depends_on:
+      - minio
+    environment:
+      MINIO_URL: ${MINIO_URL}
+      MINIO_ACCESS_KEY: ${MINIO_ROOT_USER}
+      MINIO_SECRET_KEY: ${MINIO_ROOT_PASSWORD}
+      MINIO_BUCKET: ${MINIO_BUCKET}
+      HOST_URL: ${HOST_URL}
+      JWT_SECRET_KEY: ${JWT_SECRET_KEY}
+      JWT_ISSUER: ${JWT_ISSUER}
+      JWT_EXPIRATION_TIME_MS: ${JWT_EXPIRATION_TIME_MS}
+
+  auth-mongodb1:
+    image: mongo:4.4
+    container_name: auth-mongodb1
+    restart: always
+    networks:
+      - ellaid-net
+    volumes:
+      - auth_data1:/data/db
+      - ./rs-init.sh:/scripts/rs-init.sh
+    entrypoint: [ "/usr/bin/mongod", "--bind_ip_all", "--replSet", "authdb-rs" ]
+    environment:
+      MONGODB1: auth-mongodb1
+      MONGODB2: auth-mongodb2
+      REPLICA_NAME: authdb-rs
+
+  auth-mongodb2:
+    image: mongo:4.4
+    container_name: auth-mongodb2
+    restart: always
+    networks:
+      - ellaid-net
+    volumes:
+      - auth_data2:/data/db
+    entrypoint: [ "/usr/bin/mongod", "--bind_ip_all", "--replSet", "authdb-rs" ]
+
+  comment-mongodb:
+    image: mongo:latest
+    restart: always
+    networks:
+      - ellaid-net
+    volumes:
+      - comment_data:/data/db
+
+  playlist-mongodb:
+    image: mongo:latest
+    restart: always
+    networks:
+      - ellaid-net
+    volumes:
+      - playlist_data:/data/db
+
+  track-mongodb:
+    image: mongo:latest
+    restart: always
+    networks:
+      - ellaid-net
+    volumes:
+      - track_data:/data/db
+
+  minio:
+    image: minio/minio:latest
+    restart: always
+    ports:
+      - "9000:9000"
+      - "9001:9001"
+    networks:
+      - ellaid-net
+    environment:
+      MINIO_ROOT_USER: ${MINIO_ROOT_USER}
+      MINIO_ROOT_PASSWORD: ${MINIO_ROOT_PASSWORD}
+    command: server --console-address ":9001" /data
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:9000/minio/health/live" ]
+      interval: 30s
+      timeout: 20s
+      retries: 3
+    volumes:
+      - minio_storage:/data
+
+networks:
+  ellaid-net:
+
+volumes:
+  auth_data1:
+  auth_data2:
+  comment_data:
+  playlist_data:
+  track_data:
+  minio_storage:

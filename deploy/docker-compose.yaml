@@ -32,13 +32,15 @@ services:
     expose:
       - 8081
     depends_on:
-      - auth-mongodb
+      - auth-mongodb1
+      - auth-mongodb2
     environment:
       JWT_SECRET_KEY: ${JWT_SECRET_KEY}
       JWT_ISSUER: ${JWT_ISSUER}
       JWT_EXPIRATION_TIME_MS: ${JWT_EXPIRATION_TIME_MS}
       ADMIN_USERNAME: ${ADMIN_USERNAME}
       ADMIN_PASSWORD: ${ADMIN_PASSWORD}
+      SPRING_DATA_MONGODB_URI: mongodb://auth-mongodb1:27017,auth-mongodb2:27017/auth-service-db
 
   comment:
     image: denchkm/ellaid-comment
@@ -110,13 +112,30 @@ services:
       JWT_ISSUER: ${JWT_ISSUER}
       JWT_EXPIRATION_TIME_MS: ${JWT_EXPIRATION_TIME_MS}
 
-  auth-mongodb:
-    image: mongo:latest
+  auth-mongodb1:
+    image: mongo:4.4
+    container_name: auth-mongodb1
     restart: always
     networks:
       - ellaid-net
     volumes:
-      - auth_data:/data/db
+      - auth_data1:/data/db
+      - ./rs-init.sh:/scripts/rs-init.sh
+    entrypoint: [ "/usr/bin/mongod", "--bind_ip_all", "--replSet", "authdb-rs" ]
+    environment:
+      MONGODB1: auth-mongodb1
+      MONGODB2: auth-mongodb2
+      REPLICA_NAME: authdb-rs
+
+  auth-mongodb2:
+    image: mongo:4.4
+    container_name: auth-mongodb2
+    restart: always
+    networks:
+      - ellaid-net
+    volumes:
+      - auth_data2:/data/db
+    entrypoint: [ "/usr/bin/mongod", "--bind_ip_all", "--replSet", "authdb-rs" ]
 
   comment-mongodb:
     image: mongo:latest
@@ -166,7 +185,8 @@ networks:
   ellaid-net:
 
 volumes:
-  auth_data:
+  auth_data1:
+  auth_data2:
   comment_data:
   playlist_data:
   track_data:
